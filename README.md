@@ -14,4 +14,4 @@ Compile: g++ -Wall -std=c++17 unv-smi.cxx -o unv-smi
  
 Run: ./unv-smi
 
-Further details regarding what type of information is returned, along with questions like Who, What, Where, Why, & When can be found in the Wiki. 
+Further details regarding what type of information is returned, along with questions like Who, What, Where, Why, & When can be found in the [Wiki](https://github.com/tommygorham/unv-smi/wiki). 
