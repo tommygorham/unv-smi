@@ -7,11 +7,12 @@ When optimizing an application for a system, it can be extremely benefecial to k
 # Current Requirements 
 C++17 
 
-## Quick View of Details
+## Build with GCC
+Compile: g++ -Wall -std=c++17 unv-smi-linux.cpp src/execsh.cpp src/parEnv.cpp src/formatter.cpp -o unvsmi  
 
-## Directions 
-Compile: g++ -Wall -std=c++17 unv-smi.cxx -o unv-smi
- 
 Run: ./unv-smi
 
-Further details regarding what type of information is returned, along with questions like Who, What, Where, Why, & When can be found in the [Wiki](https://github.com/tommygorham/unv-smi/wiki). 
+Further details regarding what type of information is returned, along with questions like Who, What, Where, Why, & When can be found in the [Wiki](https://github.com/tommygorham/unv-smi/wiki).
+
+## Quick View of Details
+
