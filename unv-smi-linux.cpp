@@ -1,29 +1,29 @@
 #include <iostream> 
 using std::cout; 
 using std::endl; 
-#include <iomanip>     // std::setw  
 #include <memory>      // execsh function 
 #include <stdexcept>   // execsh function
 #include <string_view> // C++17 read-only string  
 #include <string>      // commands 
 #include <array>       // execsh function
-#include <map>         // storage container 
-#include <algorithm>   // unique_copy used in std::string sanitize() 
-#include "execsh.h" 
+#include <map>         // storage container for holding CPU commands and returning CPU info  
+//#include <algorithm>   // unique_copy used in std::string sanitize() 
+#include "execsh.h"    // execute and store shell command from c++ 
+#include "parEnv.h"    // C++ and OpenMP version 
+#include "formatter.h" // whitespace helper functions: countws(), sanitize() 
 
-// function to store the result of executing a shell command 
-//std::string execsh(const char* cmd);
-
-// count whitespace
-int countws(const std::string &s); 
-
-// if too much whitespace, run this 
-std::string sanitize(const std::string &s); 
+// GPU helper prototype
+std::string gpuProgModel(std::string gpu); // Cuda, Hip, etc  
 
 int main(int argc, char* argv[])
 {  
+	// variables for any OS 
+	std::string os, gpu, gpu_info, cppv, ompv;    
+	cppv = detectCppStl();     // C++ version 
+	ompv = detectOmpVersion(); // OpenMP version 
+	
 	#ifdef __linux__ 
-	// CPU info map 
+	// Map of Commands for CPU info 
     std::map<std::string, std::string> m {
 	{"CPU Name", "lscpu | grep -oP \'Model name:\\s*\\K.+\'"}, 
 	{"CPU Arch", "lscpu | grep -oP \'Architecture:\\s*\\K.+\'"}, 
@@ -32,9 +32,10 @@ int main(int argc, char* argv[])
 	{"CPU Threads Per Core", "lscpu | grep -oP 'Thread\\(s\\) per core:\\s*\\K.+\'"}, 
 	{"CPU Logical Cores", "lscpu | grep -oP 'CPU\\(s\\):\\s*\\K.+\'"}
 	};
-	// OS info command separated, want this to print first 
-	std::string os = execsh("cat -s /etc/os-release | grep -oP \"PRETTY_NAME=\\K.*\""); 
-    os = sanitize(os); 	
+	// OS  info command separate from map, want this to print first 
+	os  = execsh("cat -s /etc/os-release | grep -oP \"PRETTY_NAME=\\K.*\""); 
+    // GPU info command separate from map, needs additional processing 
+	gpu = execsh("lspci | grep 3D"); 
 
     // process commands stored in map key, then replace the key with the command output 
     std::map<std::string, std::string>::iterator it = m.begin();
@@ -60,49 +61,45 @@ int main(int argc, char* argv[])
         cout <<  key << ": " << value;
     };
 	// print map 
-    cout << "##### Your Current System Configuration and Computational Resources Available #####";
-    cout << "\nOS name: " << os << endl; 
+    cout << "\n##### Your Current System Configuration and Computational Resources Available #####";
+    cout << "\nOS name: " << os; 
 	for( const auto& [key, value] : m ) {
 		print_key_value(key, value);
 	}
-	cout << "CPU Total Physical Cores: " << cpu_TC << endl;  
-
-	//std::string test = execsh("lscpu | grep -oP 'CPU\\(s\\):\\s*\\K.+\'");
-	// cout << test; 
+	cout << "CPU Total Physical Cores: " << cpu_TC << endl; // end of cpu info 
 	#endif
+
+	cout << "GPU detected: " <<  gpu << endl;  
+	gpu_info = gpuProgModel(gpu);  
+	cout << "\n##### Parallel Programming Environment##### \n" << cppv << "\n" << ompv << "\n" << gpu_info <<  endl; 
+    cout <<"\n\nFurther Commands that can potentially be used for GPU identification\nlspci | grep 3D\nlspci | grep VGA\nsudo lshw -C video" << endl; 
+
 	return 0; 
 
 }
 
-// execute shell command 
-/*std::string execsh(const char* cmd){
-    std::array<char, 128> buffer;
-    std::string result;
-    std::unique_ptr<FILE, decltype(&pclose)> pipe(popen(cmd, "r"), pclose);
-    if (!pipe) {
-        throw std::runtime_error("popen() failed!");
+std::string gpuProgModel(std::string gpu){  
+	std::string ret; 
+    // Display the GPU vendor and how to program it 
+    if ( gpu.find("AMD") != std::string::npos){
+        ret = "HIP is the standard programming model for AMD accelerators"; 
+        return ret;  /* GPU found */ 
     }
-    while (fgets(buffer.data(), buffer.size(), pipe.get()) != nullptr) {
-        result += buffer.data();
+    else if  (gpu.find("Intel") != std::string::npos){
+        ret = "OpenCL is the standard programming model for Intel accelerators"; 
+        return ret;  /* GPU found */ 
     }
-    return result;
+    else if (gpu.find("NVIDIA") != std::string::npos){
+        ret = "CUDA is the standard programming model for NVIDIA accelerators"; 
+        return ret; /* GPU found */ 
+    }
+    else if (gpu.find("Microsoft") != std::string::npos){
+		ret = "You may have integrated graphics, try using SYCL or OpenCL or Direct3D"; 
+	    return ret; 
+	}
+	// For GPU not found, TODO: Make this not one line so its easy to read on github
+    else {
+		ret = "Cannot determine the programming model for the GPU vendor...\nThis can happen if you are running Linux in a VM, or if you do not have a GPU manufactured by AMD, Intel, or NVIDIA";
+	}
+	return ret; 
 }
-*/ 
-// count whitespace  
-int countws(const std::string &s)
-{ 
-  int spaces =  std::count_if(s.begin(), s.end(),
-	              [](unsigned char c){ return std::isspace(c); });
-    return spaces; 
-} 
-
-// clean up whitespace
-std::string sanitize(const std::string &s)
-{ 
-	std::string output = ""; 
-    output.clear();  // Remove this to append to an existing string
-    std::unique_copy (s.begin(), s.end(), std::back_insert_iterator<std::string>(output),
-                                     [](char a,char b){ return isspace(a) && isspace(b);});   
-    return output; 
-}
-
