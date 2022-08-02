@@ -1,5 +1,5 @@
-#include "parEnv.h" 
-#include "execsh.h" 
+#include "../include/parEnv.h" 
+#include "../include/execsh.h" 
 
 std::string detectCppStl() // Determine C++ version based on macro 
 { 

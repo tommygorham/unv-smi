@@ -1,4 +1,4 @@
-#include "formatter.h" 
+#include "../include/formatter.h" 
 #include <algorithm>   // std::unique_copy used in std::string sanitize() 
 
 // count whitespace  

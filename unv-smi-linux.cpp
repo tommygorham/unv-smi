@@ -7,17 +7,15 @@ using std::endl;
 #include <string>      // commands 
 #include <array>       // execsh function
 #include <map>         // storage container for holding CPU commands and returning CPU info  
-//#include <algorithm>   // unique_copy used in std::string sanitize() 
-#include "execsh.h"    // execute and store shell command from c++ 
-#include "parEnv.h"    // C++ and OpenMP version 
-#include "formatter.h" // whitespace helper functions: countws(), sanitize() 
+#include "include/execsh.h"    // execute and store shell command from c++ 
+#include "include/parEnv.h"    // C++ and OpenMP version 
+#include "include/formatter.h" // whitespace helper functions: countws(), sanitize() 
 
 // GPU helper prototype
 std::string gpuProgModel(std::string gpu); // Cuda, Hip, etc  
 
 int main(int argc, char* argv[])
 {  
-	// variables for any OS 
 	std::string os, gpu, gpu_info, cppv, ompv;    
 	cppv = detectCppStl();     // C++ version 
 	ompv = detectOmpVersion(); // OpenMP version 
@@ -26,8 +24,8 @@ int main(int argc, char* argv[])
 	// Map of Commands for CPU info 
     std::map<std::string, std::string> m {
 	{"CPU Name", "lscpu | grep -oP \'Model name:\\s*\\K.+\'"}, 
-	{"CPU Arch", "lscpu | grep -oP \'Architecture:\\s*\\K.+\'"}, 
-	{"CPU Sockets", "lscpu | grep -oP \'Socket\\(s\\):s*\\K.+\'"},  
+	{"CPU Architecture", "lscpu | grep -oP \'Architecture:\\s*\\K.+\'"}, 
+	{"CPU Sockets Installed", "lscpu | grep -oP \'Socket\\(s\\):s*\\K.+\'"},  
 	{"CPU Cores per Socket","lscpu | grep -oP 'Core\\(s\\) per socket:\\s*\\K.+\'"}, 
 	{"CPU Threads Per Core", "lscpu | grep -oP 'Thread\\(s\\) per core:\\s*\\K.+\'"}, 
 	{"CPU Logical Cores", "lscpu | grep -oP 'CPU\\(s\\):\\s*\\K.+\'"}
@@ -52,7 +50,7 @@ int main(int argc, char* argv[])
     }
 	// calculate total physical CPU cores from map values  
     std::string cpu_CPS = m["CPU Cores per Socket"]; 
-    std::string cpu_S   = m["CPU Sockets"]; 
+    std::string cpu_S   = m["CPU Sockets Installed"]; 
     unsigned int total  = std::stoi(cpu_CPS) * std::stoi(cpu_S);  
     std::string cpu_TC  = std::to_string(total);
 
@@ -71,7 +69,7 @@ int main(int argc, char* argv[])
 
 	cout << "GPU detected: " <<  gpu << endl;  
 	gpu_info = gpuProgModel(gpu);  
-	cout << "\n##### Parallel Programming Environment##### \n" << cppv << "\n" << ompv << "\n" << gpu_info <<  endl; 
+	cout << "\n##### Parallel Programming Environment ##### \n" << cppv << "\n" << ompv << "\n" << gpu_info <<  endl; 
     cout <<"\n\nFurther Commands that can potentially be used for GPU identification\nlspci | grep 3D\nlspci | grep VGA\nsudo lshw -C video" << endl; 
 
 	return 0; 
@@ -82,19 +80,19 @@ std::string gpuProgModel(std::string gpu){
 	std::string ret; 
     // Display the GPU vendor and how to program it 
     if ( gpu.find("AMD") != std::string::npos){
-        ret = "HIP is the standard programming model for AMD accelerators"; 
+        ret = "GPU Programming Model: HIP is the standard programming model for AMD accelerators"; 
         return ret;  /* GPU found */ 
     }
     else if  (gpu.find("Intel") != std::string::npos){
-        ret = "OpenCL is the standard programming model for Intel accelerators"; 
+        ret = "GPU Programming Model: OpenCL is the standard programming model for Intel accelerators"; 
         return ret;  /* GPU found */ 
     }
     else if (gpu.find("NVIDIA") != std::string::npos){
-        ret = "CUDA is the standard programming model for NVIDIA accelerators"; 
+        ret = "GPU Programming Model: CUDA is the standard programming model for NVIDIA accelerators"; 
         return ret; /* GPU found */ 
     }
     else if (gpu.find("Microsoft") != std::string::npos){
-		ret = "You may have integrated graphics, try using SYCL or OpenCL or Direct3D"; 
+		ret = "GPU Programming Model: You may have integrated graphics, try using SYCL or OpenCL or Direct3D"; 
 	    return ret; 
 	}
 	// For GPU not found, TODO: Make this not one line so its easy to read on github
