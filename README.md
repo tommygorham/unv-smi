@@ -7,9 +7,13 @@ When optimizing an application for a system, it can be extremely benefecial to k
 # Current Requirements 
 * **C++17**: due to use of std::string_view, C++17 is most likely needed to compile. However, as you will notice in the [example output](https://github.com/tommygorham/unv-smi/tree/dev-linux/example-output) compiling with C++14 nt only worked but produced accurate results as well.
 
-## Build with GCC
-Compile: g++ -Wall -std=c++17 unv-smi-linux.cpp src/execsh.cpp src/parEnv.cpp src/formatter.cpp src/gpuinfo.cpp -o unv-smi  
+## Build directly with GCC
+Compile: g++ -Wall -std=c++17 unv-smi.cpp src/execsh.cpp src/parEnv.cpp src/formatter.cpp src/gpuinfo.cpp -o unv-smi  
 
+## Build directly with Clang
+Compile: clang++ -Wall -std=c++17 unv-smi.cpp src/execsh.cpp src/parEnv.cpp src/formatter.cpp src/gpuinfo.cpp -o unv-smi  
+
+# Run Universal System Management Interface
 Run: ./unv-smi
 
 Further details regarding what type of information is returned, along with questions like Who, What, Where, Why, & When can be found in the [Wiki](https://github.com/tommygorham/unv-smi/wiki).

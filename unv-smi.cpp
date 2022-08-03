@@ -15,7 +15,7 @@ using std::endl;
 
 int main(int argc, char* argv[])
 {
-	std::string os, gpu, gpu_info, cppv, ompv;   
+	    std::string os, gpu, gpu_info, cppv, ompv;   
         cppv = detectCppStl();     // C++ version 
         ompv = detectOmpVersion(); // OpenMP version 
         // lambda to print key, value pairs in std::map 
@@ -23,8 +23,8 @@ int main(int argc, char* argv[])
         cout <<  key << ": " << value;
     	};
         
-	#ifdef __linux__ 
-	// Map of Linux Commands for CPU info 
+	    #ifdef __linux__ 
+	    // Map of Linux Commands for CPU info 
     	std::map<std::string, std::string> m {
 		{"CPU Name", "lscpu | grep -oP \'Model name:\\s*\\K.+\'"}, 
 		{"CPU Architecture", "lscpu | grep -oP \'Architecture:\\s*\\K.+\'"}, 
@@ -32,13 +32,13 @@ int main(int argc, char* argv[])
 		{"CPU Cores per Socket","lscpu | grep -oP 'Core\\(s\\) per socket:\\s*\\K.+\'"}, 
 		{"CPU Threads Per Core", "lscpu | grep -oP 'Thread\\(s\\) per core:\\s*\\K.+\'"}, 
 		{"CPU Logical Cores", "lscpu | grep -oP 'CPU\\(s\\):\\s*\\K.+\'"}
-	};
-	// OS  info command separate from map, want this to print first 
-	os  = execsh("cat -s /etc/os-release | grep -oP \"PRETTY_NAME=\\K.*\""); 
+	    };
+	    // OS  info command separate from map, want this to print first 
+	    os  = execsh("cat -s /etc/os-release | grep -oP \"PRETTY_NAME=\\K.*\""); 
     	// GPU info command separate from map, needs additional processing 
-	gpu = execsh("lspci | grep 3D"); 
+    	gpu = execsh("lspci | grep 3D"); 
     	// process commands stored in map key, then replace the key with the command output 
-	std::map<std::string, std::string>::iterator it = m.begin();
+	    std::map<std::string, std::string>::iterator it = m.begin();
     	while (it != m.end()) { 
 		std::string command = it->second;    // query command stored in map value 
         	const char* torun   = &command[0];   // cast for execsh function  
@@ -101,6 +101,10 @@ int main(int argc, char* argv[])
         	cout << endl; 
 	} 
 	#endif 
+
+    #ifdef __APPLE__
+    cout << "\n\n MACOS " << endl; 
+    #endif
 	
 	cout << "GPU(s) detected: \n" <<  gpu << endl;  
 	gpu_info = gpuProgModel(gpu);  
