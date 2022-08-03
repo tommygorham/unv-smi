@@ -15,6 +15,7 @@ using std::endl;
 
 int main(int argc, char* argv[])
 { 
+	
     std::string os, gpu, gpu_info, cppv, ompv; // os independent vars to print at EOP   
     cppv = detectCppStl();     // C++ version 
     ompv = detectOmpVersion(); // OpenMP version 
