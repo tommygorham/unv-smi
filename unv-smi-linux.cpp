@@ -14,11 +14,15 @@ using std::endl;
 
 int main(int argc, char* argv[])
 {
-	std::string os, gpu, gpu_info, cppv, ompv;    
-	cppv = detectCppStl();     // C++ version 
+    std::string os, gpu, gpu_info, cppv, ompv;   
+    cppv = detectCppStl();     // C++ version 
 	ompv = detectOmpVersion(); // OpenMP version 
-	
-	#ifdef __linux__ 
+    // lambda to print key, value pairs in std::map 
+    auto print_key_value = [](const auto& key, const auto& value) {
+        cout <<  key << ": " << value;
+        };
+
+#ifdef __linux__ 
 	// Map of Commands for CPU info 
         std::map<std::string, std::string> m {
 	{"CPU Name", "lscpu | grep -oP \'Model name:\\s*\\K.+\'"}, 
@@ -53,9 +57,9 @@ int main(int argc, char* argv[])
         std::string cpu_TC  = std::to_string(total);
 	
 	// print map helper
- 	auto print_key_value = [](const auto& key, const auto& value) {
+ 	/*auto print_key_value = [](const auto& key, const auto& value) {
         cout <<  key << ": " << value;
-        };
+        };*/ 
 	// print map 
         cout << "\n##### Your Current System Configuration and Computational Resources Available #####";
         cout << "\nOS name: " << os; 
@@ -63,7 +67,41 @@ int main(int argc, char* argv[])
 		print_key_value(key, value);
 	}
 	cout << "CPU Total Physical Cores: " << cpu_TC << endl; // end of cpu info 
-	#endif
+#endif
+
+#ifdef _WIN32
+    std::map<std::string, std::string> m {
+    {"CPU Name", "wmic cpu get name | more +2" },  
+    {"CPU Sockets", "systeminfo | findstr  /C:\"Processor(s)\""}, 
+    {"CPU Architecture", "echo|set /p=%PROCESSOR_ARCHITECTURE%"},
+    {"CPU Cores", "wmic cpu get NumberOfCores | more +2"}
+    }; 
+
+    std::map<std::string, std::string>::iterator it = m.begin();
+        while (it != m.end()) { 
+		std::string command = it->second;    // query command stored in map value 
+                const char* torun   = &command[0];   // cast for execsh function  
+		std::string result  = execsh(torun); // run the command and store the result 
+			result = sanitize(result);   // have to sanitize all first on Windows
+		    if(command.find("wmic") != std::string::npos) 
+            { 
+               result = result.erase(0, result.find("\n")+1);
+            }
+            it->second = result;                 // store  
+            it++;                                // step through
+        }
+
+    os = execsh("systeminfo | findstr  /C:\"OS Name\"");
+    os = sanitize(os); 
+    gpu = execsh("wmic path win32_videocontroller get name");
+    gpu = sanitize(gpu); 
+    cout << os;  
+    for( const auto& [key, value] : m ) {
+		print_key_value(key, value);
+        cout << endl; 
+	} 
+    
+#endif 
 
 	cout << "GPU(s) detected: \n" <<  gpu << endl;  
 	gpu_info = gpuProgModel(gpu);  
