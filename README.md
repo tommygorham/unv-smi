@@ -5,7 +5,7 @@ Environment independent retrieval of system architecture for parallel programmer
 When optimizing an application for a system, it can be extremely benefecial to know the compute resources availabe to you. This is an attempt to report crucial details of both the hardware, the software, and the general architecture make up, regardless of the operating system & CPU/GPU chip vendors.
 
 # Current Requirements 
-C++17 
+* **C++17**: due to use of std::string_view, C++17 is most likely needed to compile. However, as you will notice in the [example output](https://github.com/tommygorham/unv-smi/tree/dev-linux/example-output) compiling with C++14 nt only worked but produced accurate results as well.
 
 ## Build with GCC
 Compile: g++ -Wall -std=c++17 unv-smi-linux.cpp src/execsh.cpp src/parEnv.cpp src/formatter.cpp src/gpuinfo.cpp -o unv-smi  
