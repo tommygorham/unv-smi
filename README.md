@@ -8,7 +8,7 @@ When optimizing an application for a system, it can be extremely benefecial to k
 C++17 
 
 ## Build with GCC
-Compile: g++ -Wall -std=c++17 unv-smi-linux.cpp src/execsh.cpp src/parEnv.cpp src/formatter.cpp -o unvsmi  
+Compile: g++ -Wall -std=c++17 unv-smi-linux.cpp src/execsh.cpp src/parEnv.cpp src/formatter.cpp -o unv-smi  
 
 Run: ./unv-smi
 
