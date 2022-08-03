@@ -16,3 +16,4 @@ Further details regarding what type of information is returned, along with quest
 
 ## Quick View of Details
 
+![alma](https://user-images.githubusercontent.com/38857089/182499028-874afbb4-1aa8-4868-95e4-429ae76ddba1.png)
