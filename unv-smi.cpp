@@ -4,14 +4,16 @@ using std::endl;
 #include <memory>              // execsh function 
 #include <stdexcept>           // execsh function
 #include <string_view>         // C++17 read-only string  
-#include <string>              // commands 
-#include <array>               // execsh function
+#include <string>              // shell/terminal commands 
 #include <map>                 // storage container for holding CPU commands and returning CPU info  
 #include <thread>              // get logical cores with std::hardware_concurrency()
+#include <iomanip>             // std::fixed, std::setprecision 
 #include "include/execsh.h"    // execute and store shell command from c++ 
 #include "include/parEnv.h"    // C++ and OpenMP version 
 #include "include/formatter.h" // whitespace helper functions: countws(), sanitize() 
 #include "include/gpuinfo.h"   // gpuProgModel() 
+
+static constexpr float SW_VERSION = 1.0; // 8/3/2022 
 
 int main(int argc, char* argv[])
 { 
@@ -138,13 +140,16 @@ int main(int argc, char* argv[])
 	}
     #endif // end MacOS 
     
-	// final print for all OS's 
+	// final print for all OS's and software version  
 	cout << "GPU(s) detected: \n" <<  gpu << endl;  
 	gpu_info = gpuProgModel(gpu);  
 	cout << "\n##### Parallel Programming Environment ##### \n" << cppv << "\n" << ompv << "\n" << gpu_info <<  endl; 
-    cout << "\n\nFurther Commands that can potentially be used for GPU identification\n"; 
+    cout << "\n\n##### Further Commands that can potentially be used for GPU identification #####\n"; 
     cout << "lspci | grep 3D\nlspci |grepVGA\nsudo lshw -C video\n"; 
     cout << "For MacOS: system_profiler SPDisplaysDataType\n" << endl; 
-	
+	cout <<  "____________________________________________________________________________________\n\n"; 
+	cout << "Thank you for using Universal System Management Interface version " << std::fixed << std::setprecision(1) << SW_VERSION; 
+	cout << "\n\n"; 
+
     return 0; 
 }
