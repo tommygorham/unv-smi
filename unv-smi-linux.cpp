@@ -67,7 +67,7 @@ int main(int argc, char* argv[])
 	cout << "CPU Total Physical Cores: " << cpu_TC << endl; // end of cpu info 
 	#endif
 
-	cout << "GPU detected: " <<  gpu << endl;  
+	cout << "GPU(s) detected: \n" <<  gpu << endl;  
 	gpu_info = gpuProgModel(gpu);  
 	cout << "\n##### Parallel Programming Environment ##### \n" << cppv << "\n" << ompv << "\n" << gpu_info <<  endl; 
     cout <<"\n\nFurther Commands that can potentially be used for GPU identification\nlspci | grep 3D\nlspci | grep VGA\nsudo lshw -C video" << endl; 
