@@ -17,7 +17,7 @@ int main(int argc, char* argv[])
 {
     std::string os, gpu, gpu_info, cppv, ompv;   
     cppv = detectCppStl();     // C++ version 
-	ompv = detectOmpVersion(); // OpenMP version 
+    ompv = detectOmpVersion(); // OpenMP version 
     // lambda to print key, value pairs in std::map 
     auto print_key_value = [](const auto& key, const auto& value) {
         cout <<  key << ": " << value;
@@ -45,12 +45,12 @@ int main(int argc, char* argv[])
         const char* torun   = &command[0];   // cast for execsh function  
 		std::string result  = execsh(torun); // run the command and store the result 
 	    int spaces = countws(result);        // check if output formatting is needed   
-	        if (spaces > 10) {  
+	    if (spaces > 10) {  
 			result = sanitize(result);       // sanitize first if excessive whitespace
-	        }  
+	    }  
 		it->second = result;                 // replace cmd with output of cmd
         it++;                                // step through
-        }
+    }
 	// calculate total physical CPU cores from map values  
     std::string cpu_CPS = m["CPU Cores per Socket"]; 
     std::string cpu_S   = m["CPU Sockets Installed"]; 
@@ -88,7 +88,7 @@ int main(int argc, char* argv[])
         }
         it->second = result;                 // store  
         it++;                                // step through
-        }
+    }
 	// prepare output 
     os = execsh("systeminfo | findstr  /C:\"OS Name\"");
     os = sanitize(os); 
