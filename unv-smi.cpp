@@ -7,6 +7,7 @@ using std::endl;
 #include <string>      // commands 
 #include <array>       // execsh function
 #include <map>         // storage container for holding CPU commands and returning CPU info  
+#include <thread>      // for Windows logical cores 
 #include "include/execsh.h"    // execute and store shell command from c++ 
 #include "include/parEnv.h"    // C++ and OpenMP version 
 #include "include/formatter.h" // whitespace helper functions: countws(), sanitize() 
@@ -94,20 +95,27 @@ int main(int argc, char* argv[])
     os = execsh("systeminfo | findstr  /C:\"OS Name\"");
     os = sanitize(os); 
     gpu = execsh("wmic path win32_videocontroller get name");
-    gpu = sanitize(gpu); 
+    gpu = sanitize(gpu);
+    int l_cores = std::thread::hardware_concurrency(); /*max openmp threads = logical cpus on machine */    
+
     cout << os;  
+    cout << "CPU Logical Cores " << l_cores << endl;  
     for( const auto& [key, value] : m ) {
 		print_key_value(key, value);
         cout << endl; 
-	} 
-    
+	}
+  
+    // std::string temp_p_cores = m["CPU Cores"];
+    // temp_p_cores = sanitize(temp_p_cores); 
+    // cout << "\nTEMP: " <<  std::stoi(temp_p_cores); 
+    // int thr_per_core = l_cores/p_cores; 
+    // cout << "\nThreads per Core: " << thr_per_core; 
+      
 #endif 
 
 	cout << "GPU(s) detected: \n" <<  gpu << endl;  
 	gpu_info = gpuProgModel(gpu);  
 	cout << "\n##### Parallel Programming Environment ##### \n" << cppv << "\n" << ompv << "\n" << gpu_info <<  endl; 
         cout <<"\n\nFurther Commands that can potentially be used for GPU identification\nlspci | grep 3D\nlspci | grep VGA\nsudo lshw -C video" << endl; 
-
 	return 0; 
-
 }
