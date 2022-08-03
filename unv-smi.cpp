@@ -79,13 +79,13 @@ int main(int argc, char* argv[])
 		std::string command = it->second;    // query command stored in map value 
         	const char* torun   = &command[0];   // cast for execsh function  
 		std::string result  = execsh(torun); // run the command and store the result 
-		result = sanitize(result);   // have to sanitize all first on Windows
+		result = sanitize(result);           // have to sanitize always on Windows it seems, won't hurt
 		// extra processing for "wmic" commands
 		if(command.find("wmic") != std::string::npos) { 
-               result = result.erase(0, result.find("\n")+1);
-        }
-        it->second = result;                 // store  
-        it++;                                // step through
+                result = result.erase(0, result.find("\n")+1);
+                }
+               it->second = result;                  // store  
+               it++;                                 // step through
     	}
 	// prepare output 
     	os = execsh("systeminfo | findstr  /C:\"OS Name\"");
