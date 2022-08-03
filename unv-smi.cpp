@@ -103,12 +103,46 @@ int main(int argc, char* argv[])
 	#endif 
 
     #ifdef __APPLE__
-    cout << "\n\n MACOS " << endl; 
+    // map of MACOS Commands for CPU Info 
+    cout << "\ndue to system_profiler commands, this process may take up to 30 seconds on MacOS" << endl;
+    cout << "\nProcessing now ..." << endl; 
+    std::map<std::string, std::string> m{ 
+        {"CPU Name", "sysctl -n machdep.cpu.brand_string"}, 
+        {"CPU Logical Cores", "sysctl -n hw.logicalcpu"},
+        {"CPU Physical Cores", "sysctl -n hw.physicalcpu"}, 
+        {"CPU Architecture", "uname -m"}, 
+        {"CPU Sockets Installed", "system_profiler | grep \'Number of Processors\'"} 
+  }; 
+
+    // process commands stored in map key, then replace the key with the command output 
+	std::map<std::string, std::string>::iterator it = m.begin();
+    while (it != m.end()) { 
+    std::string command = it->second;    // query command stored in map value 
+        const char* torun   = &command[0];   // cast for execsh function  
+    std::string result  = execsh(torun); // run the command and store the result 
+        int spaces = countws(result);        // check if output formatting is needed   
+        if (spaces > 4) {  
+        result = sanitize(result);   // sanitize first if excessive whitespace
+        }  
+    it->second = result;                 // replace cmd with output of cmd
+        it++;                                // step through
+    }
+
+    os = execsh("sw_vers | grep ProductVersion"); 
+    gpu = execsh("system_profiler SPDisplaysDataType");  
+	// print map 
+	cout << "\n##### Your Current System Configuration and Computational Resources Available #####";
+    cout << "\nMacOS Version: " << os;  
+    for( const auto& [key, value] : m ) {
+		print_key_value(key, value);
+	}
     #endif
 	
 	cout << "GPU(s) detected: \n" <<  gpu << endl;  
 	gpu_info = gpuProgModel(gpu);  
 	cout << "\n##### Parallel Programming Environment ##### \n" << cppv << "\n" << ompv << "\n" << gpu_info <<  endl; 
-    	cout <<"\n\nFurther Commands that can potentially be used for GPU identification\nlspci | grep 3D\nlspci | grep VGA\nsudo lshw -C video" << endl; 
+    	cout << "\n\nFurther Commands that can potentially be used for GPU identification\n"; 
+        cout << "lspci | grep 3D\nlspci |grepVGA\nsudo lshw -C video\n"; 
+        cout << "For MacOS: system_profiler SPDisplaysDataType\n" << endl; 
 	return 0; 
 }
