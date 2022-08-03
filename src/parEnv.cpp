@@ -7,6 +7,15 @@ std::string detectCppStl() // Determine C++ version based on macro
         case 202002L: // 202002L is a preprocessor macro used by the C++20 standard 
             return "C++ Standard: C++20";  
             break; 
+        case 201709L:
+            return "C++ Standard: C++20, GCC not the latest version"; 
+            break; 
+        case 201707L:
+            return "C++ Standard: C++20, Clang not the latest version"; 
+            break; 
+        case 201704L: 
+            return "C++ Standard: C++20, VC++ Compiler not the latest version"; 
+            break; 
         case 201703L: 
             return "C++ Standard: C++17";  
             break;
