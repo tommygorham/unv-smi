@@ -22,7 +22,7 @@ int main(int argc, char* argv[])
     	auto print_key_value = [](const auto& key, const auto& value) {
         cout <<  key << ": " << value;
     	};
-
+        
 	#ifdef __linux__ 
 	// Map of Linux Commands for CPU info 
     	std::map<std::string, std::string> m {
@@ -45,7 +45,7 @@ int main(int argc, char* argv[])
 		std::string result  = execsh(torun); // run the command and store the result 
 	    	int spaces = countws(result);        // check if output formatting is needed   
 	    	if (spaces > 10) {  
-			result = sanitize(result);       // sanitize first if excessive whitespace
+			result = sanitize(result);   // sanitize first if excessive whitespace
 	    	}  
 		it->second = result;                 // replace cmd with output of cmd
         	it++;                                // step through
@@ -61,7 +61,7 @@ int main(int argc, char* argv[])
 	for( const auto& [key, value] : m ) {
 		print_key_value(key, value);
 	}
-	cout << "CPU Total Physical Cores: " << cpu_TC << endl; // end of cpu info 
+	cout << "CPU Total Physical Cores: " << cpu_TC << endl; 
 	#endif
 
 	#ifdef _WIN32
@@ -101,6 +101,7 @@ int main(int argc, char* argv[])
         	cout << endl; 
 	} 
 	#endif 
+	
 	cout << "GPU(s) detected: \n" <<  gpu << endl;  
 	gpu_info = gpuProgModel(gpu);  
 	cout << "\n##### Parallel Programming Environment ##### \n" << cppv << "\n" << ompv << "\n" << gpu_info <<  endl; 
