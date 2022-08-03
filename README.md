@@ -1,8 +1,8 @@
 # unv-smi (Universal System Management Interface v 1.0)
-Environment independent retrieval of system architecture for parallel programmers. 
+Environment-independent retrieval of system architecture information for parallel programmers.
 
 ## Description 
-When optimizing an application for a system, it can be extremely benefecial to know the compute resources availabe to you. This is an attempt to report crucial details of both the hardware, the software, and the general architecture make up, regardless of the operating system & CPU/GPU chip vendors.
+When optimizing an application for a system, it can be extremely benefecial to know the compute resources availabe to you. This is an attempt to report crucial details of both the hardware, the software, and the general architecture make up, regardless of the operating system & CPU/GPU chip vendors (amongst other hardware restraints). unv-smi works on both computer clusters and laptops.  
 
 ## Current Requirements 
 * **C++17**: due to use of std::string_view, C++17 is most likely needed to compile. However, as you will notice in the [example output](https://github.com/tommygorham/unv-smi/tree/dev-linux/example-output) compiling with C++14 not only worked but produced accurate results as well.
