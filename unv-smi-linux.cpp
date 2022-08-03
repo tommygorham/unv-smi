@@ -10,9 +10,7 @@ using std::endl;
 #include "include/execsh.h"    // execute and store shell command from c++ 
 #include "include/parEnv.h"    // C++ and OpenMP version 
 #include "include/formatter.h" // whitespace helper functions: countws(), sanitize() 
-
-// GPU helper prototype
-std::string gpuProgModel(std::string gpu); // Cuda, Hip, etc  
+#include "include/gpuinfo.h" 
 
 int main(int argc, char* argv[])
 {
@@ -74,30 +72,4 @@ int main(int argc, char* argv[])
 
 	return 0; 
 
-}
-
-std::string gpuProgModel(std::string gpu){
-	std::string ret; 
-    // Display the GPU vendor and how to program it 
-        if ( gpu.find("AMD") != std::string::npos){
-        	ret = "GPU Programming Model: HIP is the standard programming model for AMD accelerators"; 
-        	return ret;  /* GPU found */ 
-    	}
-    	else if  (gpu.find("Intel") != std::string::npos){
-        	ret = "GPU Programming Model: OpenCL is the standard programming model for Intel accelerators"; 
-        	return ret;  /* GPU found */ 
-    	}
-    	else if (gpu.find("NVIDIA") != std::string::npos){
-        	ret = "GPU Programming Model: CUDA is the standard programming model for NVIDIA accelerators"; 
-        	return ret; /* GPU found */ 
-    	}
-    	else if (gpu.find("Microsoft") != std::string::npos){
-		ret = "GPU Programming Model: You may have integrated graphics, try using SYCL or OpenCL or Direct3D"; 
-	    	return ret; 
-	}
-	// For GPU not found, TODO: Make this not one line so its easy to read on github
-    	else {
-		ret = "Cannot determine the programming model for the GPU vendor...\nThis can happen if you are running Linux in a VM, or if you do not have a GPU manufactured by AMD, Intel, or NVIDIA";
-	}
-	return ret; 
 }
