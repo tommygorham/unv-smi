@@ -38,4 +38,14 @@ Further details regarding what type of information is returned, along with quest
 Example Output: Linux Cluster 
 ![alma](https://user-images.githubusercontent.com/38857089/182499028-874afbb4-1aa8-4868-95e4-429ae76ddba1.png)
 
+Example Output: MacOS Yosemite
 
+<img src="https://github.com/tommygorham/unv-smi/blob/main/example-output/apple-macosx/MacOSX_Yosemite.png" height="700px" /> 
+
+Example Output: Windows running Ubuntu via WSL2
+
+<img src="https://github.com/tommygorham/unv-smi/blob/main/example-output/wsl2/Ubuntu20.04LTS.png" height="500px" /> 
+
+Example Output: Windows 11
+
+<img src ="https://github.com/tommygorham/unv-smi/blob/main/example-output/ms-windows/WinPro11.png" height="500px" /> 
