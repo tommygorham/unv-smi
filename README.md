@@ -44,8 +44,27 @@ Example Output: MacOS Yosemite
 
 Example Output: Windows running Ubuntu via WSL2
 
-<img src="https://github.com/tommygorham/unv-smi/blob/main/example-output/wsl2/Ubuntu20.04LTS.png" height="500px" /> 
+<img src="https://github.com/tommygorham/unv-smi/blob/main/example-output/wsl2/Ubuntu20.04LTS.png" height="450px" /> 
 
 Example Output: Windows 11
 
 <img src ="https://github.com/tommygorham/unv-smi/blob/main/example-output/ms-windows/WinPro11.png" height="500px" /> 
+
+
+## One could also implement this in Python 
+
+```python 
+import subprocess # module for writing to cmd/shell 
+
+def determineOmpVersion(omp_version_cmd):
+    # store the omp macro 
+    ret = subprocess.check_output(omp_version_cmd, shell=True) 
+    # convert to string 
+    omp_version_macro = ret.decode('utf-8')
+    # print version via https://www.openmp.org/specifications/
+    if (omp_version_macro.__contains__('201511')): 
+        print("OpenMP Version: 4.5") 
+
+omp_version_cmd = "echo |cpp -fopenmp -dM |grep -i open" # store the command to get the omp macro
+detectOmpVersion(omp_version_cmd) 
+```
