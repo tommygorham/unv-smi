@@ -1,11 +1,13 @@
 # unv-smi (Universal System Management Interface v 1.0)
-Environment-independent retrieval of system architecture information for parallel programmers.
+A modern, environment-independent retrieval of system architecture information for parallel programmers that use C++. 
 
 ## Description 
-When optimizing an application for a system, it can be extremely beneficial to know the compute resources availabe to you. This is an attempt to report crucial details of both the hardware, the software, and the general architecture make up, regardless of the operating system & CPU/GPU chip vendors (amongst other hardware restraints). unv-smi works on both computer clusters and laptops.  
+When optimizing an application for a system, it can be extremely beneficial to know the compute resources availabe to you. This is an initial attempt to report crucial details of both the hardware, the software, and the general architecture make up, regardless of the operating system & CPU/GPU chip vendors (amongst other hardware restraints). unv-smi works on both computer clusters and laptops.  
 
 ## Current Requirements 
-* **C++17**: due to use of std::string_view, C++17 is most likely needed to compile. However, as you will notice in the [example output](https://github.com/tommygorham/unv-smi/tree/dev-linux/example-output) compiling with C++14 not only worked but produced accurate results as well.
+### NOTE: This is a C++ tool 
+* **C++17**: due to use of std::string_view and decomposition declarations in this code, C++17 is currently a requirement for full functionality of unv-smi.
+However, as you will notice in the [example output](https://github.com/tommygorham/unv-smi/tree/dev-linux/example-output), compiling with C++14 has worked in the past, and I am contemplating making this available again for older c++ versions. 
 
 ## Build with CMake 
 
@@ -14,13 +16,13 @@ mkdir build
 cd build 
 cmake .. 
 ``` 
-## Build directly with GCC
+## Build directly with GCC and c++17 (or newer) 
 
 ``` 
 g++ -Wall -std=c++17 unv-smi.cpp src/execsh.cpp src/parEnv.cpp src/formatter.cpp src/gpuinfo.cpp -o unv-smi  
 ```
 
-## Build directly with Clang
+## Build directly with Clang and c++17 (or newer) 
 
 ```
 clang++ -Wall -std=c++17 unv-smi.cpp src/execsh.cpp src/parEnv.cpp src/formatter.cpp src/gpuinfo.cpp -o unv-smi  
