@@ -20,7 +20,14 @@ int main(int argc, char* argv[])
 	
     std::string os, gpu, gpu_info, cppv, ompv; // os independent vars to print at EOP   
     cppv = detectCppStl();     // C++ version 
-    ompv = detectOmpVersion(); // OpenMP version 
+	ompv = detectOmpVersion(); // OpenMP version 
+	// kill program for now if C++17 not detected 
+    if ( __cplusplus < 201703L){ 
+		cout << "\nYou are using " << cppv << "\n" << ompv; 
+		cout << "\nC++17 is currently needed for full/appropriate functionality of this program\nTerminating...\n";  
+		return -1; 
+	}
+
     // lambda to print key, value pairs in std::map for each OS 
     auto print_key_value = [](const auto& key, const auto& value) {
         cout <<  key << ": " << value;
