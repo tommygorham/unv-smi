@@ -43,7 +43,8 @@ int main(int argc, char* argv[])
 	    {"CPU Cores per Socket","lscpu | grep -oP 'Core\\(s\\) per socket:\\s*\\K.+\'"}, 
 	    {"CPU Threads Per Core", "lscpu | grep -oP 'Thread\\(s\\) per core:\\s*\\K.+\'"}, 
 	    {"CPU Logical Cores", "lscpu | grep -oP 'CPU\\(s\\):\\s*\\K.+\'"}, 
-		{"CacheLine Size", "getconf -a | grep CACHE | grep LINESIZE"}
+		{"CacheLine Size", "getconf -a | grep CACHE | grep LINESIZE"}, 
+	    {"Stack Size Limit", "ulimit -a | grep stack"}
 	};
 	// OS  info command separate from map, want this to print first 
 	os  = execsh("cat -s /etc/os-release | grep -oP \"PRETTY_NAME=\\K.*\""); 
@@ -56,7 +57,7 @@ int main(int argc, char* argv[])
         const char* torun   = &command[0];   // cast for execsh function  
 		std::string result  = execsh(torun); // run the command and store the result 
 	    int spaces = countws(result);        // check if output formatting is needed   
-	    if (spaces > 10) {  
+	    if (spaces > 3) {  
 			result = sanitize(result);       // sanitize first if excessive whitespace
 	    }  
 		it->second = result;                 // replace cmd with output of cmd
