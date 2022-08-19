@@ -8,6 +8,7 @@ using std::endl;
 #include <map>                 // storage container for holding CPU commands and returning CPU info  
 #include <thread>              // get logical cores with std::hardware_concurrency()
 #include <iomanip>             // std::fixed, std::setprecision 
+#include <new>  
 #include "include/execsh.h"    // execute and store shell command from c++ 
 #include "include/parEnv.h"    // C++ and OpenMP version 
 #include "include/formatter.h" // whitespace helper functions: countws(), sanitize() 
@@ -27,8 +28,8 @@ int main(int argc, char* argv[])
 		cout << "\nC++17 is currently needed for full/appropriate functionality of this program\nTerminating...\n";  
 		return -1; 
 	}
-
-    // lambda to print key, value pairs in std::map for each OS 
+    
+	// lambda to print key, value pairs in std::map for each OS 
     auto print_key_value = [](const auto& key, const auto& value) {
         cout <<  key << ": " << value;
     };
@@ -41,7 +42,8 @@ int main(int argc, char* argv[])
 	    {"CPU Sockets Installed", "lscpu | grep -oP \'Socket\\(s\\):s*\\K.+\'"},  
 	    {"CPU Cores per Socket","lscpu | grep -oP 'Core\\(s\\) per socket:\\s*\\K.+\'"}, 
 	    {"CPU Threads Per Core", "lscpu | grep -oP 'Thread\\(s\\) per core:\\s*\\K.+\'"}, 
-	    {"CPU Logical Cores", "lscpu | grep -oP 'CPU\\(s\\):\\s*\\K.+\'"}
+	    {"CPU Logical Cores", "lscpu | grep -oP 'CPU\\(s\\):\\s*\\K.+\'"}, 
+		{"CacheLine Size", "getconf -a | grep CACHE | grep LINESIZE"}
 	};
 	// OS  info command separate from map, want this to print first 
 	os  = execsh("cat -s /etc/os-release | grep -oP \"PRETTY_NAME=\\K.*\""); 
@@ -145,6 +147,7 @@ int main(int argc, char* argv[])
     for( const auto& [key, value] : m ) {
 		print_key_value(key, value);
 	}
+	cout << "\nFor MacOS, a Useful command for detecting GPU Specs is: system_profiler SPDisplaysDataType\n" << endl; 
     #endif // end MacOS 
     
 	// final print for all OS's and software version  
@@ -153,8 +156,7 @@ int main(int argc, char* argv[])
 	cout << "\n##### Parallel Programming Environment ##### \n" << cppv << "\n" << ompv << "\n" << gpu_info <<  endl; 
     cout << "\n\n##### Further Commands that can potentially be used for GPU identification #####\n"; 
     cout << "lspci | grep 3D\nlspci |grepVGA\nsudo lshw -C video\n"; 
-    cout << "For MacOS: system_profiler SPDisplaysDataType\n" << endl; 
-	cout <<  "____________________________________________________________________________________\n\n"; 
+    cout <<  "____________________________________________________________________________________\n\n"; 
 	cout << "Thank you for using Universal System Management Interface version " << std::fixed << std::setprecision(1) << SW_VERSION; 
 	cout << "\n\n"; 
 
