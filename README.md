@@ -15,6 +15,7 @@ However, as you will notice in the [example output](https://github.com/tommygorh
 mkdir build
 cd build 
 cmake .. 
+make 
 ``` 
 ## Build directly with GCC and c++17 (or newer) 
 
