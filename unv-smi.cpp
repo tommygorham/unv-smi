@@ -156,7 +156,7 @@ int main(int argc, char* argv[])
 	gpu_info = gpuProgModel(gpu);  
 	cout << "\n##### Parallel Programming Environment ##### \n" << cppv << "\n" << ompv << "\n" << gpu_info <<  endl; 
     cout << "\n\n##### Further Commands that can potentially be used for GPU identification #####\n"; 
-    cout << "lspci | grep 3D\nlspci |grepVGA\nsudo lshw -C video\n"; 
+    cout << "lspci | grep 3D\nlspci |grep VGA\nsudo lshw -C video\n"; 
     cout <<  "____________________________________________________________________________________\n\n"; 
 	cout << "Thank you for using Universal System Management Interface version " << std::fixed << std::setprecision(1) << SW_VERSION; 
 	cout << "\n\n"; 
