@@ -1,5 +1,7 @@
-# unv-smi (Universal System Management Interface v 1.0)
+# unv-smi (Universal System Management Interface v 1.1)
 A modern, environment-independent retrieval of system architecture information for parallel programmers that use C++. 
+* NOTE: v1.1 Output has not yet been added to README or examples 
+* v1.1 NEW FEATURES for Linux OS's: cache line size, RAM info & additional GPU Processing 
 
 ## Description 
 When optimizing an application for a system, it can be extremely beneficial to know the compute resources availabe to you. This is an initial attempt to report crucial details of both the hardware, the software, and the general architecture make up, regardless of the operating system & CPU/GPU chip vendors (amongst other hardware restraints). unv-smi works on both computer clusters and laptops.  
@@ -37,7 +39,7 @@ clang++ -Wall -std=c++17 unv-smi.cpp src/execsh.cpp src/parEnv.cpp src/formatter
 
 Further details regarding what type of information is returned, along with questions like Who, What, Where, Why, & When can be found in the [Wiki](https://github.com/tommygorham/unv-smi/wiki).
 
-## Quick View of Details
+## Quick View of Details from version 1.0 
 Example Output: Linux Cluster 
 ![alma](https://user-images.githubusercontent.com/38857089/182499028-874afbb4-1aa8-4868-95e4-429ae76ddba1.png)
 
