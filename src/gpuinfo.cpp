@@ -22,7 +22,7 @@ std::string gpuProgModel(std::string gpu){
 	}
 	// For GPU not found, TODO: Make this not one line so its easy to read on github
     	else {
-		ret = "Cannot determine the programming model for the GPU vendor...\nThis can happen if you are running Linux in a VM, or if you do not have a GPU manufactured by AMD, Intel, or NVIDIA";
+		ret = "Cannot determine the programming model for the GPU vendor..."; 
 	}
 	return ret; 
 }
