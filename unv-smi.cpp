@@ -3,7 +3,6 @@ using std::cout;
 using std::endl; 
 #include <memory>              // execsh function 
 #include <stdexcept>           // execsh function
-#include <string_view>         // C++17 read-only string  
 #include <string>              // shell/terminal commands 
 #include <map>                 // storage container for holding CPU commands and returning CPU info  
 #include <thread>              // get logical cores with std::hardware_concurrency()
@@ -14,42 +13,46 @@ using std::endl;
 #include "include/formatter.h" // whitespace helper functions: countws(), sanitize() 
 #include "include/gpuinfo.h"   // gpuProgModel() 
 
-static constexpr float SW_VERSION = 1.0; // 8/3/2022 
+static constexpr float SW_VERSION = 1.1; // 8/29/2022 
+// v1.1 New Linux OS Features: cache line size, RAM info, and additional gpu processing  
 
 int main(int argc, char* argv[])
 { 
-	
-    std::string os, gpu, gpu_info, cppv, ompv; // os independent vars to print at EOP   
+    std::string os, gpu, gpu_info,cppv, ompv; // os independent variables
     cppv = detectCppStl();     // C++ version 
-    ompv = detectOmpVersion(); // OpenMP version 
+	ompv = detectOmpVersion(); 
 	// kill program for now if C++17 not detected 
     if ( __cplusplus < 201703L){ 
-		cout << "\nYou are using " << cppv << "\n" << ompv; 
+		cout << "\nYou are using " << cppv << "\n";  
 		cout << "\nC++17 is currently needed for full/appropriate functionality of this program\nTerminating...\n";  
 		return -1; 
 	}
-    
 	// lambda to print key, value pairs in std::map for each OS 
     auto print_key_value = [](const auto& key, const auto& value) {
         cout <<  key << ": " << value;
     };
         
 	#ifdef __linux__ 
-	// Map of Linux Commands for CPU info 
-    std::map<std::string, std::string> m {
+	// Map of Linux Commands for CPU-related info 
+	std::map<std::string, std::string> m {
 	    {"CPU Name", "lscpu | grep -oP \'Model name:\\s*\\K.+\'"}, 
 	    {"CPU Architecture", "lscpu | grep -oP \'Architecture:\\s*\\K.+\'"}, 
 	    {"CPU Sockets Installed", "lscpu | grep -oP \'Socket\\(s\\):s*\\K.+\'"},  
-	    {"CPU Cores per Socket","lscpu | grep -oP 'Core\\(s\\) per socket:\\s*\\K.+\'"}, 
-	    {"CPU Threads Per Core", "lscpu | grep -oP 'Thread\\(s\\) per core:\\s*\\K.+\'"}, 
-	    {"CPU Logical Cores", "lscpu | grep -oP 'CPU\\(s\\):\\s*\\K.+\'"}, 
-		{"CacheLine Size", "getconf -a | grep CACHE | grep LINESIZE"}, 
-	    {"Stack Size Limit", "ulimit -a | grep stack"}
-	};
-	// OS  info command separate from map, want this to print first 
+	    {"CPU Cores per Socket","lscpu | grep -oP \'Core\\(s\\) per socket:\\s*\\K.+\'"}, 
+	    {"CPU Threads Per Core", "lscpu | grep -oP \'Thread\\(s\\) per core:\\s*\\K.+\'"}, 
+	    {"CPU Logical Cores", "lscpu | grep -oP \'CPU\\(s\\):\\s*\\K.+\'"}, 
+		{"CPU Cache Line Size", "getconf -a | grep CACHE | grep -oP -m1 \'LINESIZE\\s*\\K.+\'"},  
+		{"Stack Size Limit", "ulimit -a | grep stack"}, 
+        {"RAM MemTotal", "cat /proc/meminfo | grep -oP \'MemTotal:\\s*\\K.+\'"}, 	
+        {"RAM MemFree ", "cat /proc/meminfo | grep -oP \'MemFree:\\s*\\K.+\'"} 	
+    };
+    // OS ad GPU commands separate from map for formatting purposes 
     os  = execsh("cat -s /etc/os-release | grep -oP \"PRETTY_NAME=\\K.*\""); 
-    // GPU info command separate from map, needs additional processing 
-    gpu = execsh("lspci | grep 3D"); 
+	gpu = execsh("lspci | grep 3D");
+    if(gpu.empty()){ 
+		gpu = execsh("lspci | grep VGA"); 
+	}
+	gpu_info = gpuProgModel(gpu); 
     // process commands stored in map key, then replace the key with the command output 
 	std::map<std::string, std::string>::iterator it = m.begin();
     while (it != m.end()) { 
@@ -57,7 +60,7 @@ int main(int argc, char* argv[])
         const char* torun   = &command[0];   // cast for execsh function  
 		std::string result  = execsh(torun); // run the command and store the result 
 	    int spaces = countws(result);        // check if output formatting is needed   
-	    if (spaces > 3) {  
+	    if (spaces > 2) {  
 			result = sanitize(result);       // sanitize first if excessive whitespace
 	    }  
 		it->second = result;                 // replace cmd with output of cmd
@@ -70,12 +73,20 @@ int main(int argc, char* argv[])
     std::string cpu_TC  = std::to_string(total);
 	// print map 
 	cout << "\n##### Your Current System Configuration and Computational Resources Available #####";
-    cout << "\nOS name: " << os; 
+    cout << "\nOS name: " << os;
 	for( const auto& [key, value] : m ) {
 		print_key_value(key, value);
 	 }
-	cout << "CPU Total Physical Cores: " << cpu_TC << endl; 
-	#endif // End Linux OS
+	cout << "Total Physical CPU Cores: " << cpu_TC; 
+	// try alternative lspci command, only for linux and if not detected gpu yet  
+    if(gpu != ""){ 
+	    gpu_info = gpuProgModel(gpu);  
+		cout << "\nGPU(s) detected: " <<  gpu  << gpu_info << endl;  
+    }
+	else{ 
+		cout << "\nUnable to determine GPU information" << endl; 
+	} 
+	#endif // End Linux OS 
 
 	#ifdef _WIN32
 	// Map of Windows Commands for CPU Info 
@@ -111,7 +122,9 @@ int main(int argc, char* argv[])
     for( const auto& [key, value] : m ) {
 		print_key_value(key, value);
         cout << endl; 
-	} 
+	}
+	gpu_info = gpuProgModel(gpu);   
+    cout << "GPU(s) detected: \n" <<  gpu << "\n" << gpu_info << endl;  
 	#endif // end Windows OS 
 
     #ifdef __APPLE__
@@ -148,18 +161,18 @@ int main(int argc, char* argv[])
     for( const auto& [key, value] : m ) {
 		print_key_value(key, value);
 	}
-	cout << "\nFor MacOS, a Useful command for detecting GPU Specs is: system_profiler SPDisplaysDataType\n" << endl; 
-    #endif // end MacOS 
-    
+	cout << "\nFor MacOS, a useful command for detecting GPU Specs is: system_profiler SPDisplaysDataType\n" << endl; 
+    gpu_info = gpuProgModel(gpu);  
+	cout << "GPU(s) detected: \n" << gpu <<"\n" << gpu_info << endl;
+	#endif // end MacOS 
+	
 	// final print for all OS's and software version  
-	cout << "GPU(s) detected: \n" <<  gpu << endl;  
-	gpu_info = gpuProgModel(gpu);  
-	cout << "\n##### Parallel Programming Environment ##### \n" << cppv << "\n" << ompv << "\n" << gpu_info <<  endl; 
-    cout << "\n\n##### Further Commands that can potentially be used for GPU identification #####\n"; 
-    cout << "lspci | grep 3D\nlspci | grep VGA\nsudo lshw -C video\n"; 
-    cout <<  "____________________________________________________________________________________\n\n"; 
+	cout << cppv << ompv << endl; 
+	cout <<  "\n____________________________________________________________________________________\n\n"; 
 	cout << "Thank you for using Universal System Management Interface version " << std::fixed << std::setprecision(1) << SW_VERSION; 
 	cout << "\n\n"; 
-
-    return 0; 
+    
+	return 0; 
+	
 }
+

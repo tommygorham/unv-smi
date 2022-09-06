@@ -29,9 +29,13 @@ std::string detectCppStl(){
     } 
  } 
 
-// OS-independent way to get the current openmp standard 
+// Unfinished way to get the current openmp standard 
+// Breaks if cpp env variable mapped to old compiler 
+// more logic needed 
 std::string detectOmpVersion() {
 std::string omp_macro = execsh("echo |cpp -fopenmp -dM |grep -i open"); // store the openmp macro this command returns
-    if (omp_macro.find("201511") != std::string::npos) { return "OpenMP Version: 4.5"; } /* hard setting for now */   
-    else { return "OpenMP version not found"; }	// for looking up more openmp macros see https://www.openmp.org/specifications/ 
+    if(omp_macro.empty()) { return "\nOpenMP version not found. Your cpp environment variable is attached to an old compiler"; } 
+	else if (omp_macro.find("201511") != std::string::npos) { return "\nOpenMP Version: 4.5"; }   
+    else { return "\nOpenMP version not found, use C++ Version Macro to find information"; }	// for looking up more openmp macros see https://www.openmp.org/specifications/ 
 } 
+
