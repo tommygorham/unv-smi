@@ -12,7 +12,7 @@ std::string gpuProgModel(std::string gpu){
         	ret = "GPU Programming Model: OpenCL is the standard programming model for Intel accelerators"; 
         	return ret;  /* GPU found */ 
     	}
-    	else if (gpu.find("NVIDIA") != std::string::npos){
+    	else if (gpu.find("NVIDIA") != std::string::npos || gpu.find("Matrox") != std::string::npos){
         	ret = "GPU Programming Model: CUDA is the standard programming model for NVIDIA accelerators"; 
         	return ret; /* GPU found */ 
     	}

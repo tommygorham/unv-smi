@@ -32,6 +32,6 @@ std::string detectCppStl(){
 // OS-independent way to get the current openmp standard 
 std::string detectOmpVersion() {
 std::string omp_macro = execsh("echo |cpp -fopenmp -dM |grep -i open"); // store the openmp macro this command returns
-    if (omp_macro.find("201511") != std::string::npos) { return "OpenMP Version: 4.5"; } /* hard setting for now */   
+	if (omp_macro.find("201511") != std::string::npos) { return "OpenMP Version: 4.5"; } /* hard setting for now */   
     else { return "OpenMP version not found"; }	// for looking up more openmp macros see https://www.openmp.org/specifications/ 
 } 
