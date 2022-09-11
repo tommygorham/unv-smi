@@ -1,9 +1,19 @@
-// Version 1.2
-// Removed C++17 string_view to begin making more portable 
-// Separate Code for Linux, Windows, & Mac OS  
+// Universal System Management Interface 
+// Author:  Tommy Gorham 
+// Change Log 
+// Version 1.2 
+// Notes: 
+// Removed C++17 string_view to help make source code a bit more portable 
+// A note about this: some compilers can compile with c++17, but do not implement all of c++17's features. 
+// Namely, c++17's string_view feature... Therefore it has been removed to not make it a potential resreaint.  
+// Also Code updates will be almost entirely for Linux, as this is esentially a HPC C++ tool for Clusters 
 
-// Version 1.1 
+// Version 1.1 August 2022 
+// Notes: 
 // New Linux OS Features: cache line size, RAM info, and additional gpu processing  
+
+// Version 1.0 Mid-Summer 2022
+// Initial Version, works with older versions of C++., 11,14 etc.
 
 #include <iostream> 
 using std::cout; 
@@ -20,7 +30,7 @@ using std::endl;
 #include "include/formatter.h" // whitespace helper functions: countws(), sanitize() 
 #include "include/gpuinfo.h"   // gpuProgModel() 
 
-static constexpr float SW_VERSION = 1.2; // 9/7/2022 
+static constexpr float SW_VERSION = 1.2; // 9/10/2022 
 
 int main(int argc, char* argv[])
 { 
@@ -86,7 +96,88 @@ int main(int argc, char* argv[])
     else { // if both lspci commands didn't work  
 		cout <<  "\nUnable to determine GPU information" << endl; 
     } 
-	#endif // End Linux OS-specific
+#endif // End Linux OS-specific
+	
+    // MACOSX 
+#ifdef __APPLE__
+    // map of MACOS Commands for CPU Info 
+    cout << "\ndue to system_profiler commands, this process may take up to 30 seconds on MacOS" << endl;
+    cout << "\nProcessing now ..." << endl; 
+    std::map<std::string, std::string> m{ 
+        {"CPU Name", "sysctl -n machdep.cpu.brand_string"}, 
+        {"CPU Logical Cores", "sysctl -n hw.logicalcpu"},
+        {"CPU Physical Cores", "sysctl -n hw.physicalcpu"}, 
+        {"CPU Architecture", "uname -m"}, 
+        {"CPU Sockets Installed", "system_profiler | grep \'Number of Processors\'"} 
+  }; 
+
+    // process commands stored in map key, then replace the key with the command output 
+	std::map<std::string, std::string>::iterator it = m.begin();
+    while (it != m.end()) { 
+        std::string command = it->second;    // query command stored in map value 
+        const char* torun   = &command[0];   // cast for execsh function  
+        std::string result  = execsh(torun); // run the command and store the result 
+        int spaces = countws(result);        // check if output formatting is needed   
+        if (spaces > 4) {  
+        result = sanitize(result);   // sanitize first if excessive whitespace
+        }  
+        it->second = result;                 // replace cmd with output of cmd
+        it++;                                // step through
+    }
+    // prepare output
+    os = execsh("sw_vers | grep ProductVersion"); 
+    gpu = execsh("system_profiler SPDisplaysDataType");  
+	// print map 
+	cout << "\n##### Your Current System Configuration and Computational Resources Available #####";
+    cout << "\nMacOS Version: " << os;  
+    for( const auto& [key, value] : m ) {
+		print_key_value(key, value);
+	}
+	cout << "\nFor MacOS, a useful command for detecting GPU Specs is: system_profiler SPDisplaysDataType\n" << endl; 
+    gpu_info = gpuProgModel(gpu);  
+	cout << "GPU(s) detected: \n" << gpu <<"\n" << gpu_info << endl;
+#endif // end MACOSX
+
+    // WIN32/64  
+#ifdef _WIN32
+	// Map of Windows Commands for CPU Info 
+	std::map<std::string, std::string> m {
+        {"CPU Name", "wmic cpu get name | more +2" },  
+    	{"CPU Sockets", "systeminfo | findstr  /C:\"Processor(s)\""}, 
+    	{"CPU Architecture", "echo|set /p=%PROCESSOR_ARCHITECTURE%"},
+    	{"CPU Cores", "wmic cpu get NumberOfCores | more +2"}
+    }; 
+    // process commands stored in map key, then replace the key with the command output 
+    std::map<std::string, std::string>::iterator it = m.begin();
+    while (it != m.end()) { 
+        std::string command = it->second;    // query command stored in map value 
+        const char* torun   = &command[0];   // cast for execsh function  
+		std::string result  = execsh(torun); // run the command and store the result 
+		result = sanitize(result);           // have to sanitize always on Windows it seems, won't hurt
+		// extra processing for "wmic" commands
+		if(command.find("wmic") != std::string::npos) { 
+            result = result.erase(0, result.find("\n")+1);
+            }
+        it->second = result;                  // store  
+        it++;                                 // step through
+     }
+	// prepare output 
+    os = execsh("systeminfo | findstr  /C:\"OS Name\"");
+    os = sanitize(os); 
+    gpu = execsh("wmic path win32_videocontroller get name");
+    gpu = sanitize(gpu);
+    int l_cores = std::thread::hardware_concurrency(); // using std::thread, can't find windows CMD for this     
+	// print map 
+	cout << os;  
+    cout << "CPU Logical Cores " << l_cores << endl;  
+    for( const auto& [key, value] : m ) {
+		print_key_value(key, value);
+        cout << endl; 
+	}
+	gpu_info = gpuProgModel(gpu);   
+    cout << "GPU(s) detected: \n" <<  gpu << "\n" << gpu_info << endl;  
+#endif // end Windows OS 
+
 	if (ompv.empty()) { 
 		ompv = "OpenMP Version was not determined"; 
 	} 
@@ -98,4 +189,3 @@ int main(int argc, char* argv[])
     
 	return 0; 
 }
-

@@ -1,41 +1,68 @@
 # unv-smi (Universal System Management Interface v 1.1)
-A modern, environment-independent retrieval of system architecture information for parallel programmers that use C++. 
-* NOTE: v1.1 Output has not yet been added to README or examples 
-* v1.1 NEW FEATURES for Linux OS's: cache line size, RAM info & additional GPU Processing 
+An instantaneous C++17 retrieval of system architecture including availabe hardware resources, and parallel
+programming heuristics.
 
 ## Description 
-When optimizing an application for a system, it can be extremely beneficial to know the compute resources availabe to you. This is an initial attempt to report crucial details of both the hardware, the software, and the general architecture make up, regardless of the operating system & CPU/GPU chip vendors (amongst other hardware restraints). unv-smi works on both computer clusters and laptops.  
+When optimizing a software application for a specific machine, I have found it can be extremely beneficial to know, ahead
+of time, the compute resources that are availabe to you for parallel exploitation and other optimization techniques. 
+
+This program aims to report crucial details of both the hardware, the software, and the general architecture make up
+through executing a simple, single source, c++17 program. 
+
+## Why is this useful? 
+unv-smi works as long as you have a relatively modern c++ compiler. 
+
+E.g., Progably doesn't work with GCC4, see (tested compilers)
+
+This means, regardless of the operating system & and the various other hardware/software restraints that come about when trying to  
+reveal useful specs about a system, you can identify for instance, the preferred programming model for your GPU(s).  
+
+This includes complex computer cluster architectures and laptops with integrated graphics cards.  
 
 ## Current Requirements 
-### NOTE: This is a C++ tool 
-* **C++17**: due to use of std::string_view and decomposition declarations in this code, C++17 is currently a requirement for full functionality of unv-smi.
-However, as you will notice in the [example output](https://github.com/tommygorham/unv-smi/tree/dev-linux/example-output), compiling with C++14 has worked in the past, and I am contemplating making this available again for older c++ versions. 
+### NOTE: This is a C++17 tool 
+* Structures bindings, aka decomposition declarations, are used in this code to iterate through an std::map. Thus, a
+compiler that supports this C++17 feature is requirement for full functionality of unv-smi.
 
-## Build with CMake 
+Prior versions of this code, as you will notice in the [example
+output](https://github.com/tommygorham/unv-smi/tree/dev-linux/example-output), did not use this feature, and can be used
+for older compilers that only support up to say c++14. 
+
+## Building unv-smi with CMake 
 
 ```
 mkdir build
 cd build 
 cmake .. 
 make 
+
 ``` 
-## Build directly with GCC and c++17 (or newer) 
+
+## Preferred C++ Compilers for unv-smi  
+unv-smi has been extensively tested with GCC and Clang. 
+
+
+### Building unv-smi directly with GCC 
 
 ``` 
 g++ -Wall -std=c++17 unv-smi.cpp src/execsh.cpp src/parEnv.cpp src/formatter.cpp src/gpuinfo.cpp -o unv-smi  
 ```
 
-## Build directly with Clang and c++17 (or newer) 
+### Building unv-smi directly with Clang 
 
 ```
 clang++ -Wall -std=c++17 unv-smi.cpp src/execsh.cpp src/parEnv.cpp src/formatter.cpp src/gpuinfo.cpp -o unv-smi  
 ```
 
-## Run Universal System Management Interface
+## Running the Universal System Management Interface to display system info
 
 ```
 ./unv-smi
 ```
+
+# Tested Compilers 
+GCC 8/9/10/11/12 
+Clang 10/11/12/13
 
 Further details regarding what type of information is returned, along with questions like Who, What, Where, Why, & When can be found in the [Wiki](https://github.com/tommygorham/unv-smi/wiki).
 
