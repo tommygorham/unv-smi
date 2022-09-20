@@ -1,23 +1,23 @@
-# unv-smi (Universal System Management Interface v 1.1)
+# unv-smi (Universal System Management Interface v 1.2)
 An instantaneous C++17 retrieval of system architecture including availabe hardware resources, and parallel
 programming heuristics.
 
 ## Description 
-When optimizing a software application for a specific machine, I have found it can be extremely beneficial to know, ahead
+When optimizing a software application for a specific machine, I have found it to be extremely beneficial to know ahead
 of time, the compute resources that are availabe to you for parallel exploitation and other optimization techniques. 
 
 This program aims to report crucial details of both the hardware, the software, and the general architecture make up
 through executing a simple, single source, c++17 program. 
 
 ## Why is this useful? 
-unv-smi works as long as you have a relatively modern c++ compiler. 
-
-E.g., Progably doesn't work with GCC4, see (tested compilers)
+Namely, **unv-smi reveals extremely important information (especially for parallel programmers), as long as you have a relatively modern c++ compiler.**
 
 This means, regardless of the operating system & and the various other hardware/software restraints that come about when trying to  
 reveal useful specs about a system, you can identify for instance, the preferred programming model for your GPU(s).  
 
-This includes complex computer cluster architectures and laptops with integrated graphics cards.  
+Universal System Management Interface was designed to work across a wide range of diversified machines, including complex computer cluster architectures with many cores, down to single-socket laptops with integrated graphics cards.  
+
+*Note: unv-smi progably doesn't work with older compilers, e.g., GCC4 ,  see (tested compilers)*
 
 ## Current Requirements 
 ### NOTE: This is a C++17 tool 
@@ -35,7 +35,6 @@ mkdir build
 cd build 
 cmake .. 
 make 
-
 ``` 
 
 ## Preferred C++ Compilers for unv-smi  
@@ -61,8 +60,11 @@ clang++ -Wall -std=c++17 unv-smi.cpp src/execsh.cpp src/parEnv.cpp src/formatter
 ```
 
 # Tested Compilers 
-GCC 8/9/10/11/12 
-Clang 10/11/12/13
+GCC: 8, 9, 10, 11, 12 
+
+Clang: 8, 9, 10, 11, 12, 13, 14
+
+MSVC: 19.32, 19.33 for x64 
 
 Further details regarding what type of information is returned, along with questions like Who, What, Where, Why, & When can be found in the [Wiki](https://github.com/tommygorham/unv-smi/wiki).
 
