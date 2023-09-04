@@ -1,3 +1,10 @@
+/*  SystemInfo.h
+ *  
+ *  Author: Thomas Gorham 
+ *  September 2023 
+ *  
+ */ 
+
 #pragma once
 #include <iostream>  // std::cout, std::endl, etc 
 #include <string>    // main datatype we are working with 
@@ -7,7 +14,7 @@
 #include <stdexcept> // execsh function
 #include <thread>    // std::hardware_concurrency()
 #include <iomanip>   // std::fixed, std::setprecision 
-#include <regex>  
+#include <regex>     // Output formatting 
 
 class SystemInfo {
 public:
@@ -34,7 +41,7 @@ public:
                     std::cout << std::endl;
                 } 
             #else 
-            std::cout << std::endl;
+                std::cout << std::endl;
             #endif 
         }
         
@@ -110,6 +117,7 @@ protected:
         return (wsback <= wsfront ? std::string() : std::string(wsfront, wsback));
     }
 
+    // Output formatting helper 
     static std::string extractOSName(const std::string& s) {
         size_t pos = s.find(":");
         if (pos != std::string::npos) {
@@ -156,9 +164,11 @@ protected:
     	else {
 		    ret = "Cannot determine the programming model for the GPU vendor..."; 
   	    }
-	return ret; 
+
+	    return ret; 
     } 
 
+    /* Find C++ Macro and return standard */ 
     std::string detectCppStl(){ 
     #ifdef _MSC_VER
         #if _MSC_VER >= 1928 

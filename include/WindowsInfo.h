@@ -62,23 +62,22 @@ protected:
         cpu_TC = extractNumber(cpu_TC); 
         int l_cores = std::thread::hardware_concurrency(); // using std::thread, can't find windows CMD for this     
         cpu_LC = std::to_string(l_cores); 
-        // print map 
         gpu_info = gpuProgModel(gpu);   
     }
-private: 
+private:
+    /* Output formatting function for Windows-only */ 
     static std::string sanitizeWmicOutput(const std::string& s) {
         size_t pos = s.rfind("Name");
         if (pos != std::string::npos) {
             std::string extracted = s.substr(pos + 4);
             size_t firstNonWhitespacePos = extracted.find_first_not_of(" \t\n\r\f\v");
-
             if (firstNonWhitespacePos != std::string::npos) {
                 return extracted.substr(firstNonWhitespacePos);
             }
         }
         return s;
     }
-
+    /* Output formatting function for Windows-only */ 
     static std::string sanitizeSystemInfoOutput(const std::string &s) {
         size_t pos = s.find(":");
         if (pos != std::string::npos) {
@@ -88,5 +87,4 @@ private:
         return s;
     }
 };
-
 #endif

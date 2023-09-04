@@ -36,7 +36,6 @@ protected:
         // Trim white spaces
         productName.erase(productName.begin(), std::find_if(productName.begin(), productName.end(), [](unsigned char ch) { return !std::isspace(ch); }));
         productName.erase(std::find_if(productName.rbegin(), productName.rend(), [](unsigned char ch) { return !std::isspace(ch); }).base(), productName.end());
-
         // Extract product version
         std::string productVersion = execsh("sw_vers | grep ProductVersion | cut -d':' -f2");
         // Trim white spaces
@@ -62,8 +61,8 @@ protected:
             std::string command = it->second;    // query command stored in map value 
             const char* torun   = &command[0];   // cast for execsh function  
             std::string result  = execsh(torun); // run the command and store the result 
-            result = sanitize(result);       // sanitize first if excessive whitespace
-            result = trim(result); 
+            result = sanitize(result);           // output formatting 
+            result = trim(result);               // output formatting 
             it->second = result;                 // replace cmd with output of cmd
             it++;                                // step through
         }
