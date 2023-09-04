@@ -3,6 +3,10 @@ project(unv-smi)
 
 include_directories(include) 
 set(CMAKE_CXX_FLAGS " -Wall ") 
-set(CMAKE_CXX_STANDARD 17) 
+set(CMAKE_CXX_STANDARD 14) 
 
-add_executable(unv-smi unv-smi.cpp src/execsh.cpp src/parEnv.cpp src/formatter.cpp src/gpuinfo.cpp)  
+if(CMAKE_CXX_COMPILER_ID MATCHES "AppleClang")
+    add_definitions(-DUSE_APPLECLANG)
+endif()
+
+add_executable(unv-smi unv-smi.cpp)  

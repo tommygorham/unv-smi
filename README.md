@@ -1,34 +1,49 @@
-# unv-smi (Universal System Management Interface v 1.2)
-An instantaneous C++17 retrieval of system architecture including availabe hardware resources, and parallel
-programming heuristics.
+# unv-smi (Universal System Management Interface v 1.3)
+A simplified mechanism for instantaneously identifying your GPU + other system specs on any computer running any OS.   
 
-## Description 
-When optimizing a software application for a specific machine, I have found it to be extremely beneficial to know ahead
-of time, the compute resources that are availabe to you for parallel exploitation and other optimization techniques. 
+All you need is a C++ compiler. 
+
+# What's New in Version 1.3 
+
+### Major improvements were made in version 1.3 (September 4, 2023 Release):  
+
+* Lightened restriction on the C++ standard while still utilizing modern C++ 
+    - C++14 and up 
+
+* Formatted output across all OS's 
+    - Output strings now look uniform across diversified systems
+
+* Improved modularity and portability using best C++ practices 
+    - unv-smi has been refactored to implement object-oriented design
+    - inheritance/virtual functions, static functions, smart pointers, and additional error handling 
+    - Simplified build command when not using CMake 
+
+* Easier to contribute for future development
+   - Simplified file structure and CMake, just 4 header files plus unv-smi.cpp 
+   - WindowsInfo.h,  LinuxInfo.h, and MacInfo.h all derive from SystemInfo.h 
+     thus it is now easier to contribute new code to this repository. 
+     E.g., Windows developers only need to edit one file ie (WindowsInfo.h) 
+
+* unv-smi now works on Microsoft Visual Studio out of the box
+
+* unv-smi now reports gpu info on Apple Silicon devices 
+
+
+# Description 
+When optimizing a software application for a specific machine, it's useful to know the compute resources that are availabe to you 
+for parallel exploitation and other optimization techniques ahead of time. 
 
 This program aims to report crucial details of both the hardware, the software, and the general architecture make up
-through executing a simple, single source, c++17 program. 
+through executing a simple, single source, c++ program. 
 
-## Why is this useful? 
-Namely, **unv-smi reveals extremely important information (especially for parallel programmers), as long as you have a relatively modern c++ compiler.**
+# Why is this useful? 
+This program was created as an alternative to [nvidia-smi](https://developer.nvidia.com/nvidia-system-management-interface). 
 
-This means, regardless of the operating system & and the various other hardware/software restraints that come about when trying to  
-reveal useful specs about a system, you can identify for instance, the preferred programming model for your GPU(s).  
+All you need is a C++ compiler, no NVIDIA Graphics card is necessary to identify your GPU(s). 
 
 Universal System Management Interface was designed to work across a wide range of diversified machines, including complex computer cluster architectures with many cores, down to single-socket laptops with integrated graphics cards.  
 
-*Note: unv-smi progably doesn't work with older compilers, e.g., GCC4 ,  see (tested compilers)*
-
-## Current Requirements 
-### NOTE: This is a C++17 tool 
-* Structures bindings, aka decomposition declarations, are used in this code to iterate through an std::map. Thus, a
-compiler that supports this C++17 feature is requirement for full functionality of unv-smi.
-
-Prior versions of this code, as you will notice in the [example
-output](https://github.com/tommygorham/unv-smi/tree/dev-linux/example-output), did not use this feature, and can be used
-for older compilers that only support up to say c++14. 
-
-## Building unv-smi with CMake 
+# How to build unv-smi with CMake (preferred) 
 
 ```
 mkdir build
@@ -37,68 +52,29 @@ cmake ..
 make 
 ``` 
 
-## Preferred C++ Compilers for unv-smi  
-unv-smi has been extensively tested with GCC and Clang. 
-
-
-### Building unv-smi directly with GCC 
+# Alternative: How to build unv-smi without CMake  
 
 ``` 
-g++ -Wall -std=c++17 unv-smi.cpp src/execsh.cpp src/parEnv.cpp src/formatter.cpp src/gpuinfo.cpp -o unv-smi  
+g++ -Wall -Iinclude unv-smi.cpp -o unv-smi  
 ```
 
-### Building unv-smi directly with Clang 
-
-```
-clang++ -Wall -std=c++17 unv-smi.cpp src/execsh.cpp src/parEnv.cpp src/formatter.cpp src/gpuinfo.cpp -o unv-smi  
-```
-
-## Running the Universal System Management Interface to display system info
+# How to Run 
 
 ```
 ./unv-smi
 ```
 
-# Tested Compilers 
-GCC: 8, 9, 10, 11, 12 
+# Tested Compilers v1.3 (Fall 2023) 
+| Compiler | Versions               |
+|----------|-------|
+| GCC     | 12    |
+| Clang++  | 12    |
+| MSVC    | 19    |
+| AppleClang | 14 | 
 
-Clang: 8, 9, 10, 11, 12, 13, 14
-
-MSVC: 19.32, 19.33 for x64 
-
-Further details regarding what type of information is returned, along with questions like Who, What, Where, Why, & When can be found in the [Wiki](https://github.com/tommygorham/unv-smi/wiki).
-
-## Quick View of Details from version 1.0 
-Example Output: Linux Cluster 
-![alma](https://user-images.githubusercontent.com/38857089/182499028-874afbb4-1aa8-4868-95e4-429ae76ddba1.png)
-
-Example Output: MacOS Yosemite
-
-<img src="https://github.com/tommygorham/unv-smi/blob/main/example-output/apple-macosx/MacOSX_Yosemite.png" height="700px" /> 
-
-Example Output: Windows running Ubuntu via WSL2
-
-<img src="https://github.com/tommygorham/unv-smi/blob/main/example-output/wsl2/Ubuntu20.04LTS.png" height="450px" /> 
-
-Example Output: Windows 11
-
-<img src ="https://github.com/tommygorham/unv-smi/blob/main/example-output/ms-windows/WinPro11.png" height="500px" /> 
+# Version 1.3 Example Output 
 
 
-## One could also implement this in Python 
+## More information 
 
-```python 
-import subprocess # module for writing to cmd/shell 
-
-def determineOmpVersion(omp_version_cmd):
-    # store the omp macro 
-    ret = subprocess.check_output(omp_version_cmd, shell=True) 
-    # convert to string 
-    omp_version_macro = ret.decode('utf-8')
-    # print version via https://www.openmp.org/specifications/
-    if (omp_version_macro.__contains__('201511')): 
-        print("OpenMP Version: 4.5") 
-
-omp_version_cmd = "echo |cpp -fopenmp -dM |grep -i open" # store the command to get the omp macro
-detectOmpVersion(omp_version_cmd) 
-```
+Further details regarding what type of information is returned can be found in the [Wiki](https://github.com/tommygorham/unv-smi/wiki).
