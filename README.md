@@ -73,7 +73,14 @@ g++ -Wall -Iinclude unv-smi.cpp -o unv-smi
 | AppleClang | 14 | 
 
 # Version 1.3 Example Output 
+### Windows PC (MSVC 19) 
+<img src="https://github.com/tommygorham/unv-smi/blob/main/example-output/ms-windows/msvc19-windows.png" width="875px" />
 
+### Mac mini (AppleClang 14) 
+<img src="https://github.com/tommygorham/unv-smi/blob/main/example-output/apple-macosx/AppleClang14-macos.png" width="875px" />
+
+### WSL2 (Clang 12) 
+<img src="https://github.com/tommygorham/unv-smi/blob/main/example-output/wsl2/Clang12-wls2.png" width="875x" />
 
 ## More information 
 
