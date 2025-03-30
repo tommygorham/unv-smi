@@ -1,8 +1,5 @@
-/*  MacInfo.h
- *  
- *  Author: Thomas Gorham 
- *  September 2023 
- *  
+/* 
+ * This file contains Mac-specific commands for reporting information 
  */ 
 
 #pragma once

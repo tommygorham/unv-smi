@@ -1,8 +1,5 @@
-/*  WindowsInfo.h
- *  
- *  Author: Thomas Gorham 
- *  September 2023 
- *  
+/* 
+ * This file contains Windows-specific commands for reporting information 
  */ 
 
 #pragma once

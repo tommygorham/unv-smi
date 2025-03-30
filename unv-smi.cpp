@@ -1,16 +1,17 @@
-/*  unv-smi.cpp 
- *  
- *  Author: Thomas Gorham 
- *  September 2023 
- *  
- */ 
+/*
+ * This program detects the operating system it’s compiled on
+ * (Linux, macOS, or Windows) and instantiates a corresponding
+ * SystemInfo object to print out system-specific information.
+ * It also displays a version number for the Universal System
+ * Management Interface tool.
+ */
 
 #include "SystemInfo.h"
 #include "LinuxInfo.h"
 #include "MacInfo.h"
 #include "WindowsInfo.h"
 
-static constexpr float SW_VERSION = 1.3; // 9/2/2023 
+static constexpr float SW_VERSION = 1.4; // April 2025
 
 int main() {
     std::unique_ptr<SystemInfo> sysInfo;
@@ -31,6 +32,6 @@ int main() {
     }
     std::cout << "Thank you for using Universal System Management Interface\n"
               << "unv-smi v" << std::fixed << std::setprecision(1) << SW_VERSION 
-	          << "\n\n"; 
+              << "\n\n"; 
     return 0;
 }
