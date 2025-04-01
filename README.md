@@ -10,10 +10,13 @@ This program aims to report crucial details of both the hardware, the software, 
 importantly, the GPU through executing a simple, single source, c++ program. 
 
 # Why is this useful? 
-This program was created as an alternative to [nvidia-smi](https://developer.nvidia.com/nvidia-system-management-interface). 
+This program was created as an alternative to [nvidia-smi](https://developer.nvidia.com/nvidia-system-management-interface) 
 because I couldn't find an equivalent command on an AMD machine. 
 
-All you need is a C++ compiler, no NVIDIA Graphics card is necessary to identify your GPU(s). 
+Since its inception, unv-smi has evolved into much more than a GPU resource identifier, such that v1.3 was 
+cited in a PhD Dissertation at the University of Tennessee at Chattanooga regarding it's usefulness. 
+
+This is a programmer's tool, so all you will ever need is a C++ compiler, no NVIDIA Graphics card is necessary to identify your GPU(s). 
 
 Universal System Management Interface was designed to work across a wide range of diversified machines, including complex computer cluster architectures with many cores, down to single-socket laptops with integrated graphics cards.  
 
@@ -34,6 +37,9 @@ make
 ```
 
 # Example Output 
+### Parallels Desktop Linux VM on Mac
+<img src="example-output/parallels-desktop-vm/virtual-parallels-desktop.png" />
+
 ### Windows PC (MSVC 19) unvsmi-version-1.3
 <img src="https://github.com/tommygorham/unv-smi/blob/main/example-output/ms-windows/msvc19-windows.png" width="875px" />
 
