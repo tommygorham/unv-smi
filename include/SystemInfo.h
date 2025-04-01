@@ -101,7 +101,7 @@ protected:
     static std::string extractNumber(const std::string &s) {
         std::regex e("\\d+");  // Match digits
         std::smatch match;
-        if(std::regex_search(s, match, e)) {
+        if (std::regex_search(s, match, e)) {
             return match.str();
         }
         return "";
@@ -122,11 +122,11 @@ protected:
     }
 
     /* Function to determine Gpu Vendor */ 
-    std::string gpuProgModel(std::string gpu){
+    std::string gpuProgModel(std::string gpu) {
         std::string ret; 
         
         /* Display the GPU vendor and what to program it with */  
-        if ( gpu.find("AMD") != std::string::npos){
+        if ( gpu.find("AMD") != std::string::npos) {
             ret = "GPU Programming Model: Radeon Open Compute platform (ROCm) with HIP\n"
                 + std::string(23, ' ')
                 + "HIP for AMD is the primary API that serves a\n"
@@ -134,28 +134,28 @@ protected:
                 + "role similar to CUDA for NVIDIA."; 
             return ret;  
         }
-        
-        else if  (gpu.find("Intel") != std::string::npos){
+        else if  (gpu.find("Intel") != std::string::npos) {
             ret = "GPU Programming Model: Intel oneAPI is the typical programming model for Intel accelerators"; 
             return ret; 
         }
-        
-        else if (gpu.find("NVIDIA") != std::string::npos || gpu.find("Matrox") != std::string::npos){
+        else if (gpu.find("NVIDIA") != std::string::npos || gpu.find("Matrox") != std::string::npos) {
             ret = "GPU Programming Model: CUDA is the typical programming model for NVIDIA accelerators"; 
             return ret; 
         }
-        
-        else if (gpu.find("Apple") != std::string::npos){
+        else if (gpu.find("Apple") != std::string::npos) {
             ret = "GPU Programming Model: Metal is the typical programming model for Apple Silicon accelerators"; 
             return ret; 
         }
-
-        else if (gpu.find("Microsoft") != std::string::npos){
-            ret = "GPU Programming Model: You may have integrated graphics, try using SYCL, OpenCL, or Direct3D"; 
+        else if (gpu.find("Microsoft") != std::string::npos) {
+            ret = "A GPU with compute capability was not detected"
+                  "You may have an integrated graphics card without GPU Compute"; 
             return ret; 
         }
-        
-        // For GPU not found,
+        else if (gpu.find("Virtio") != std::string::npos) { 
+            ret = "A virtual graphics adapter without GPU Compute was detected";
+            return ret;
+        }
+        // GPU not found or recognized
         else {
             ret = "Cannot determine the programming model for the GPU vendor..."; 
         }
