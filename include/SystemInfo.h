@@ -25,17 +25,17 @@ public:
         std::cout << "OS: " << os << std::endl;
         
         #ifdef _WIN32 
-            std::cout << "Total Physical CPU Cores: " << cpu_TC << std::endl; 
-            std::cout << "Total Logical CPU Cores: " << cpu_LC << std::endl; 
+        std::cout << "Total Physical CPU Cores: " << cpu_TC << std::endl; 
+        std::cout << "Total Logical CPU Cores: " << cpu_LC << std::endl; 
         #endif 
         
         // Print Map 
         for (auto it = infoMap.begin(); it != infoMap.end(); ++it) {
             std::cout << it->first << ": " << it->second;
             #ifdef _WIN32 
-                if (std::next(it) != infoMap.end()) {
+            if (std::next(it) != infoMap.end()) {
                     std::cout << std::endl;
-                } 
+            } 
             #else 
             std::cout << std::endl;
             #endif 
@@ -49,15 +49,15 @@ public:
         }
         
         #ifdef USE_APPLECLANG 
-            ompv = "Apple-provided clang does not support OpenMP by default"; 
+        ompv = "Apple-provided clang does not support OpenMP by default"; 
         #else
-            ompv = detectOmpVersion(); // OpenMP version 
-            if (ompv.empty()) { 
-                ompv = "OpenMP Version was not determined"; 
-            }
+        ompv = detectOmpVersion(); // OpenMP version 
+        if (ompv.empty()) { 
+            ompv = "OpenMP Version was not determined"; 
+        }
         #endif 
                 
-        /* Final print for all OS's and software version  */ 
+    /* Final print for all OS's and software version  */ 
     std::cout <<  cppv << "\n" << ompv << std::endl; 
     std::cout <<  "\n_________________________________________________________\n"; 
     } // End printInfo() 
@@ -80,7 +80,7 @@ protected:
     /* Output formatting function to count whitespace 
      * and decide if the output needs to be formatted 
      * based on the result */ 
-    static int countws(const std::string &s){ 
+    static int countws(const std::string &s) { 
         int spaces =  std::count_if(s.begin(), s.end(), [](unsigned char c){ return std::isspace(c); });
         return spaces; 
     } 
@@ -88,7 +88,7 @@ protected:
     /* Output formatting function that removes consecutive whitespaces
      * This function is to be called based upon the result of countws()
      */ 
-    static std::string sanitize(const std::string &s){ 
+    static std::string sanitize(const std::string &s) { 
         std::string output = ""; 
         std::unique_copy (s.begin(), s.end(), std::back_insert_iterator<std::string>(output),
                           [](char a,char b){ return isspace(a) && isspace(b);});   
@@ -123,9 +123,8 @@ protected:
 
     /* Function to determine Gpu Vendor */ 
     std::string gpuProgModel(std::string gpu) {
-        std::string ret; 
-        
         /* Display the GPU vendor and what to program it with */  
+        std::string ret; 
         if ( gpu.find("AMD") != std::string::npos) {
             ret = "GPU Programming Model: Radeon Open Compute platform (ROCm) with HIP\n"
                 + std::string(23, ' ')
@@ -163,19 +162,19 @@ protected:
     } 
 
     /* Find C++ Macro and return standard */ 
-    std::string detectCppStl(){ 
+    std::string detectCppStl() { 
     #ifdef _MSC_VER
         #if _MSC_VER >= 1928 
-            return "C++ Standard: Likely C++20 or newer, using MSVC";
+        return "C++ Standard: Likely C++20 or newer, using MSVC";
         #elif _MSC_VER >= 1914 
-            return "C++ Standard: Likely C++17, using MSVC";
+        return "C++ Standard: Likely C++17, using MSVC";
         #elif _MSC_VER >= 1900 
-            return "C++ Standard: Likely C++14, using MSVC";
+        return "C++ Standard: Likely C++14, using MSVC";
         #else 
-            return "C++ Standard: Unknown version, using an older MSVC";
+        return "C++ Standard: Unknown version, using an older MSVC";
         #endif
-    #else
-        switch (__cplusplus){
+    #endif
+        switch (__cplusplus) {
             case 202002L:
                 return "C++ Standard: C++20, 202002";  
             case 201709L:
@@ -193,8 +192,7 @@ protected:
             default: 
                 return "C++ version not found. The value of __cplusplus is: " + std::to_string(__cplusplus);
         }
-    #endif
-} 
+    } // end detectCppStl() 
 
     // OS-independent way to get the current openmp standard 
     std::string detectOmpVersion() {
