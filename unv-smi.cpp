@@ -30,8 +30,10 @@ int main() {
     if (sysInfo) {
         sysInfo->printInfo();
     }
+
     std::cout << "Thank you for using Universal System Management Interface\n"
               << "unv-smi v" << std::fixed << std::setprecision(1) << SW_VERSION 
               << "\n\n"; 
+    
     return 0;
 }

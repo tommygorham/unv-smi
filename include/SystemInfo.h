@@ -77,17 +77,13 @@ protected:
     virtual void gatherInfo() = 0; 
     virtual std::string execsh(const char* cmd) = 0; 
 
-    /* Output formatting function to count whitespace 
-     * and decide if the output needs to be formatted 
-     * based on the result */ 
+    // Output formatting function to count whitespace 
     static int countws(const std::string &s) { 
         int spaces =  std::count_if(s.begin(), s.end(), [](unsigned char c){ return std::isspace(c); });
         return spaces; 
     } 
 
-    /* Output formatting function that removes consecutive whitespaces
-     * This function is to be called based upon the result of countws()
-     */ 
+    // Output formatting function that removes consecutive whitespaces
     static std::string sanitize(const std::string &s) { 
         std::string output = ""; 
         std::unique_copy (s.begin(), s.end(), std::back_insert_iterator<std::string>(output),
@@ -106,6 +102,7 @@ protected:
         }
         return "";
     }
+
     static std::string trim(const std::string& s) {
         auto wsfront = std::find_if_not(s.begin(), s.end(), [](int c) {return std::isspace(c); });
         auto wsback = std::find_if_not(s.rbegin(), s.rend(), [](int c) {return std::isspace(c); }).base();
@@ -121,9 +118,9 @@ protected:
         return s;
     }
 
-    /* Function to determine Gpu Vendor */ 
+    // Function to determine Gpu Vendor 
     std::string gpuProgModel(std::string gpu) {
-        /* Display the GPU vendor and what to program it with */  
+        // Display the GPU vendor and what to program it with  
         std::string ret; 
         if ( gpu.find("AMD") != std::string::npos) {
             ret = "GPU Programming Model: Radeon Open Compute platform (ROCm) with HIP\n"
