@@ -6,22 +6,14 @@ A simplified mechanism for instantaneously identifying your GPU & other system s
 # Description 
 When programming it's often useful to know the compute resources that are availabe to you ahead of time. 
 This program reports crucial details of both the hardware, the software, the general architecture, and most
-importantly, the GPU(s), through executing a simple, single source, c++ program. 
+importantly, the GPU(s), through executing a simple, single source, c++ program. Initially, unv-smi was created as an alternative to [nvidia-smi](https://developer.nvidia.com/nvidia-system-management-interface) 
+for revealing GPU information on systems that do not have Nvidia GPUs. Now, unv-smi is more of an all-in-one tool for
+parallel programmers or researchers that need to document system specs 
+and it has been cited in [a PhD Dissertation at the University of Tennessee at Chattanooga](https://scholar.utc.edu/theses/788/)   
 
-# Why is this useful? 
-It's difficult to find information about your GPU if your GPU was not manufactured by nvidia. 
-unv-smi was created as an alternative to [nvidia-smi](https://developer.nvidia.com/nvidia-system-management-interface) 
-for revealing GPU information on systems that do not have Nvidia GPUs, and do not that do not have such a mechanism (though unv-smi works for NVIDIA GPUs too)   
+unv-smi was designed to work across a wide range of diversified machines, including complex computer cluster architectures with many cores, down to single-socket laptops with integrated graphics cards.  
 
-# What if I don't have a GPU
-See [example output](https://github.com/tommygorham/unv-smi/blob/main/README.md#example-output) below for all of the
-info unv-smi reports. 
-Since its inception, unv-smi has evolved into much more than a GPU resource identifier, and it has been
-cited in [a PhD Dissertation at the University of Tennessee at Chattanooga](https://scholar.utc.edu/theses/788/)   
-
-Universal System Management Interface was designed to work across a wide range of diversified machines, including complex computer cluster architectures with many cores, down to single-socket laptops with integrated graphics cards.  
-
-Essentially any system with a modern C++ compiler will work. Some that have been tested are GCC, Clang++, Intel, MSVC, and AppleClang compilers on Apple Silicon Macs. 
+unv-smi works on Linux, Windows, and MacOs. 
 
 # Build
 
