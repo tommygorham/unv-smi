@@ -1,17 +1,20 @@
 # unv-smi (Universal System Management Interface)
-A simplified mechanism for instantaneously identifying your GPU & other system specs on any computer running any OS.   
-
 **Requirements:** C++ compiler that supports at least C++14.
 
 # Description 
 When programming it's often useful to know the compute resources that are availabe to you ahead of time. 
 This program reports crucial details of both the hardware, the software, the general architecture, and most
-importantly, the GPU(s), through executing a simple, single source, c++ program. Initially, unv-smi was created as an alternative to [nvidia-smi](https://developer.nvidia.com/nvidia-system-management-interface) 
-for revealing GPU information on systems that do not have Nvidia GPUs. Now, unv-smi is more of an all-in-one tool for
-parallel programmers or researchers that need to document system specs 
-and it has been cited in [a PhD Dissertation at the University of Tennessee at Chattanooga](https://scholar.utc.edu/theses/788/)   
+importantly, the GPU(s), through executing a simple, single source, c++ program. 
 
-unv-smi was designed to work across a wide range of diversified machines, including complex computer cluster architectures with many cores, down to single-socket laptops with integrated graphics cards.  
+# Purpose 
+Initially, Universal System Management Interface (unv-smi) was created as an alternative to [nvidia-smi](https://developer.nvidia.com/nvidia-system-management-interface) 
+for revealing GPU information on systems that do not have Nvidia GPUs. Though it still serves this purpose, unv-smi also reveals 
+architectural information that parallel programmers or PhD researchers may find helpful. In 2022, unv-smi was cited in 
+[a PhD Dissertation at the University of Tennessee at Chattanooga](https://scholar.utc.edu/theses/788/). This tool was designed 
+to work across a wide range of diversified machines, including complex computer cluster architectures with many cores, down to 
+single-socket laptops with integrated graphics cards. See the [example-output folder](https://github.com/tommygorham/unv-smi/tree/main/example-output) 
+for examples. 
+
 
 unv-smi works on Linux, Windows, and MacOs. 
 
