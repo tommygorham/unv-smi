@@ -42,14 +42,17 @@ protected:
         /* Remove whitespace from output */ 
         os  = sanitize(os);  
         os = trim(os); 
-        gpu = execsh("lspci | grep 3D");
+        gpu = execsh("lspci | grep -i 3D");
         
-        /* If lscpi | grep 3D didn't work */ 
+        /* Alternative commands for GPU detection*/ 
         if (gpu.empty()) { 
-            /* Sometimes linux architectures like this command better */ 
-            gpu = execsh("lspci | grep VGA"); 
+            gpu = execsh("lspci | grep -i VGA"); 
         }
-        
+
+        if (gpu.empty()) { 
+            gpu = execsh("lspci | grep -i display"); 
+        }
+
         /* Remove whitespace from output */ 
         gpu = sanitize(gpu); 
         gpu = trim(gpu); 
