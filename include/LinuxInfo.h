@@ -1,12 +1,8 @@
-/* 
- * This file contains Linux-specific commands for reporting information      
- */ 
-
+// This file contains Linux-specific commands for reporting information      
 #pragma once
 #include "SystemInfo.h" 
 #include <memory> 
 #include <array> 
-
 #ifdef __linux__
 class LinuxInfo : public SystemInfo {
 public:
