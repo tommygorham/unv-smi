@@ -1,6 +1,4 @@
-/*  
- * This file is the driver for reporting information on some operating system
- */ 
+// This file is the driver for reporting information on some operating system
 #pragma once
 #include <iostream>  // std::cout, std::endl
 #include <string>    // main datatype we are working with 
@@ -15,21 +13,14 @@
 class SystemInfo {
 public:
     virtual ~SystemInfo() = default;
-    
-    /* Driver function of based class */ 
     void printInfo() {
-        gatherInfo();              // Ensure we have the latest info
-        cppv = detectCppStl();     // C++ version 
-        
-        // Begin printing 
+        gatherInfo();              
+        cppv = detectCppStl();     
         std::cout << "OS: " << os << std::endl;
-        
         #ifdef _WIN32 
         std::cout << "Total Physical CPU Cores: " << cpu_TC << std::endl; 
         std::cout << "Total Logical CPU Cores: " << cpu_LC << std::endl; 
         #endif 
-        
-        // Print Map 
         for (auto it = infoMap.begin(); it != infoMap.end(); ++it) {
             std::cout << it->first << ": " << it->second;
             #ifdef _WIN32 
@@ -40,49 +31,40 @@ public:
             std::cout << std::endl;
             #endif 
         }
-        
         if (gpu != "") {
             std::cout << "GPU(s) detected: " << gpu << "\n" << gpu_info << std::endl;
         }
         else { 
             std::cout <<  "\nUnable to determine GPU information" << std::endl; 
         }
-        
         #ifdef USE_APPLECLANG 
         ompv = "Apple-provided clang does not support OpenMP by default"; 
         #else
-        ompv = detectOmpVersion(); // OpenMP version 
+        ompv = detectOmpVersion(); 
         if (ompv.empty()) { 
             ompv = "OpenMP Version was not determined"; 
         }
         #endif 
-                
     /* Final print for all OS's and software version  */ 
     std::cout <<  cppv << "\n" << ompv << std::endl; 
     std::cout <<  "\n_________________________________________________________\n"; 
     } // End printInfo() 
 protected:
-    /* Variables */ 
     std::string os;
     std::string gpu;
     std::string gpu_info;
     std::string cppv;
     std::string ompv;
-    // todo: move these to windows
     std::string cpu_TC;
     std::string cpu_LC; 
     std::map<std::string, std::string> infoMap;
-    
-    /* Pure virtual functions */ 
     virtual void gatherInfo() = 0; 
     virtual std::string execsh(const char* cmd) = 0; 
-
     // Output formatting function to count whitespace 
     static int countws(const std::string &s) { 
         int spaces =  std::count_if(s.begin(), s.end(), [](unsigned char c){ return std::isspace(c); });
         return spaces; 
     } 
-
     // Output formatting function that removes consecutive whitespaces
     static std::string sanitize(const std::string &s) { 
         std::string output = ""; 
@@ -90,10 +72,7 @@ protected:
                           [](char a,char b){ return isspace(a) && isspace(b);});   
         return output; 
     }
-   
-    /* Output formatting function to extract the numeric portion from the string.
-     * Depends on #include regex 
-     */
+    // Output formatting function to extract the numeric portion from the string
     static std::string extractNumber(const std::string &s) {
         std::regex e("\\d+");  // Match digits
         std::smatch match;
@@ -102,13 +81,11 @@ protected:
         }
         return "";
     }
-
     static std::string trim(const std::string& s) {
         auto wsfront = std::find_if_not(s.begin(), s.end(), [](int c) {return std::isspace(c); });
         auto wsback = std::find_if_not(s.rbegin(), s.rend(), [](int c) {return std::isspace(c); }).base();
         return (wsback <= wsfront ? std::string() : std::string(wsfront, wsback));
     }
-
     // Output formatting helper 
     static std::string extractOSName(const std::string& s) {
         size_t pos = s.find(":");
@@ -117,48 +94,39 @@ protected:
         }
         return s;
     }
-
     // Function to determine Gpu Vendor 
     std::string gpuProgModel(std::string gpu) {
         // Display the GPU vendor and what to program it with  
         std::string ret; 
         if ( gpu.find("AMD") != std::string::npos) {
-            ret = "GPU Programming Model: Radeon Open Compute platform (ROCm) with HIP\n"
-                + std::string(23, ' ')
-                + "HIP for AMD is the primary API that serves a\n"
-                + std::string(23, ' ') 
-                + "role similar to CUDA for NVIDIA."; 
+            ret = "GPU Programming Model: ROCm with HIP\n";
             return ret;  
         }
         else if  (gpu.find("Intel") != std::string::npos) {
-            ret = "GPU Programming Model: Intel oneAPI is the typical programming model for Intel accelerators"; 
+            ret = "GPU Programming Model: Intel oneAPI"; 
             return ret; 
         }
         else if (gpu.find("NVIDIA") != std::string::npos || gpu.find("Matrox") != std::string::npos) {
-            ret = "GPU Programming Model: CUDA is the typical programming model for NVIDIA accelerators"; 
+            ret = "GPU Programming Model: CUDA"; 
             return ret; 
         }
         else if (gpu.find("Apple") != std::string::npos) {
-            ret = "GPU Programming Model: Metal is the typical programming model for Apple Silicon accelerators"; 
+            ret = "GPU Programming Model: Metal"; 
             return ret; 
         }
         else if (gpu.find("Microsoft") != std::string::npos) {
-            ret = "A GPU with compute capability was not detected"
-                  "You may have an integrated graphics card without GPU Compute"; 
+            ret = "A GPU with compute capability was not detected";
             return ret; 
         }
         else if (gpu.find("Virtio") != std::string::npos) { 
             ret = "A virtual graphics adapter without GPU Compute was detected";
             return ret;
         }
-        // GPU not found or recognized
         else {
             ret = "Cannot determine the programming model for the GPU vendor..."; 
         }
         return ret; 
     } 
-
-    /* Find C++ Macro and return standard */ 
     std::string detectCppStl() { 
     #ifdef _MSC_VER
         #if _MSC_VER >= 1928 
@@ -189,8 +157,7 @@ protected:
             default: 
                 return "C++ version not found. The value of __cplusplus is: " + std::to_string(__cplusplus);
         }
-    } // end detectCppStl() 
-
+    } 
     // OS-independent way to get the current openmp standard 
     std::string detectOmpVersion() {
         std::string omp_macro = execsh("echo |cpp -fopenmp -dM |grep -i open"); // store the openmp macro this command returns
