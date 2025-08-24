@@ -24,14 +24,16 @@ make
 ./unv-smi
 ```
 
-## Output
+### Apple PC Demo
 
 https://github.com/user-attachments/assets/c3adec7c-d3db-4c49-8d1b-398e944a2e62
 
-### Linux Cluster 
-<img src="example-output/linux-clusters/Rhel8Cuda.png" />
+### Linux Cluster Example 
+<img src="example-output/Rhel8Cuda.png" />
 
-### Windows PC
-<img src="https://github.com/tommygorham/unv-smi/blob/main/example-output/ms-windows/msvc19-windows.png" width="875px" />
+### Windows PC Example
+<img src="https://github.com/tommygorham/unv-smi/blob/main/example-output/msvc19-windows.png" width="875px" />
 
-[Additional details here](https://github.com/tommygorham/unv-smi/wiki).
+[Additional examples](example-output)
+
+[Additional details](https://github.com/tommygorham/unv-smi/wiki)

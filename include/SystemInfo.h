@@ -25,7 +25,7 @@ public:
             std::cout << it->first << ": " << it->second;
             #ifdef _WIN32 
             if (std::next(it) != infoMap.end()) {
-                    std::cout << std::endl;
+                std::cout << std::endl;
             } 
             #else 
             std::cout << std::endl;

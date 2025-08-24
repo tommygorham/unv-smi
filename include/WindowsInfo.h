@@ -1,12 +1,8 @@
-/* 
- * This file contains Windows-specific commands for reporting information 
- */ 
-
+// This file contains Windows-specific commands for reporting information 
 #pragma once
 #include "SystemInfo.h"
 #include <memory> 
 #include <array> 
-
 #ifdef _WIN32
 class WindowsInfo : public SystemInfo {
 public:
@@ -39,7 +35,7 @@ protected:
             std::string result  = execsh(torun); // run the command and store the result 
             result = sanitize(result);           // always sanitize on Windows 
             // extra processing for "wmic" commands
-            if(command.find("wmic") != std::string::npos) { 
+            if (command.find("wmic") != std::string::npos) { 
                 result = sanitizeWmicOutput(result); 
                 result = sanitize(result); 
             } else if (command.find("systeminfo") != std::string::npos) {

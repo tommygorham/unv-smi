@@ -1,12 +1,8 @@
-/* 
- * This file contains Mac-specific commands for reporting information 
- */ 
-
+// This file contains Mac-specific commands for reporting information 
 #pragma once
 #include "SystemInfo.h"
 #include <memory> 
 #include <array>
-
 #ifdef __APPLE__
 class MacInfo : public SystemInfo {
 public:
