@@ -4,7 +4,7 @@ CLI tool to reveal some basic specs on any machine, any architecture, with any G
 **Compatibility:** Heterogeneous HPC clusters or standalone PCs running Linux, Windows, or MacOS.   
 **Requirements:** C++ compiler that supports at least C++14.
 
-https://github.com/user-attachments/assets/985b984d-53e6-4788-8ed1-8327b089e3cc
+![Live Demo](https://github.com/user-attachments/assets/985b984d-53e6-4788-8ed1-8327b089e3cc)
 
 A friend of mine used this tool to help document results across different systems in his [PhD Dissertation at the University of Tennessee at Chattanooga](https://scholar.utc.edu/theses/788/). 
 
