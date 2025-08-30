@@ -128,7 +128,7 @@ protected:
         return ret; 
     } 
     std::string detectCppStl() { 
-    #ifdef _MSC_VER
+        #ifdef _MSC_VER
         #if _MSC_VER >= 1928 
         return "C++ Standard: Likely C++20 or newer, using MSVC";
         #elif _MSC_VER >= 1914 
@@ -138,7 +138,7 @@ protected:
         #else 
         return "C++ Standard: Unknown version, using an older MSVC";
         #endif
-    #endif
+        #endif
         switch (__cplusplus) {
             case 202002L:
                 return "C++ Standard: C++20, 202002";  
@@ -158,14 +158,17 @@ protected:
                 return "C++ version not found. The value of __cplusplus is: " + std::to_string(__cplusplus);
         }
     } 
-    // OS-independent way to get the current openmp standard 
     std::string detectOmpVersion() {
+        // Return the OpenMP version from the macro, see https://www.openmp.org/specifications/
+        #ifdef CLANG_COMPILER
+        std::string omp_macro = execsh("echo |clang -fopenmp -dM -E - < /dev/null | grep -i openmp");
+        #else
         std::string omp_macro = execsh("echo |cpp -fopenmp -dM |grep -i open"); // store the openmp macro this command returns
-        // Check various known OpenMP macro values
-        if (omp_macro.find("201811") != std::string::npos) { return "OpenMP Version: 5.0"; } 
-        if (omp_macro.find("201511") != std::string::npos) { return "OpenMP Version: 4.5"; } 
-        if (omp_macro.find("201307") != std::string::npos) { return "OpenMP Version: 4.0"; } 
-        if (omp_macro.find("200805") != std::string::npos) { return "OpenMP Version: 3.0"; } 
-        else { return "OpenMP version not found"; }    // for looking up more openmp macros see https://www.openmp.org/specifications/ 
+        #endif
+        if (omp_macro.find("201811") != std::string::npos) { return "OpenMP Version: 5.0"; }
+        if (omp_macro.find("201511") != std::string::npos) { return "OpenMP Version: 4.5"; }
+        if (omp_macro.find("201307") != std::string::npos) { return "OpenMP Version: 4.0"; }
+        if (omp_macro.find("200805") != std::string::npos) { return "OpenMP Version: 3.0"; }
+        else { return "OpenMP version not found"; }
     }
 };
