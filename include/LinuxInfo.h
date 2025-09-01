@@ -1,14 +1,14 @@
-// This file contains Linux-specific commands for reporting information      
+// This file contains Linux-specific commands for reporting information
 #pragma once
-#include "SystemInfo.h" 
-#include <memory> 
-#include <array> 
+#include "SystemInfo.h"
+#include <memory>
+#include <array>
 #ifdef __linux__
 class LinuxInfo : public SystemInfo {
 public:
     ~LinuxInfo() override = default;
 protected:
-    /* Execute a pre-defined command in the Linux infoMap */  
+    /* Execute a pre-defined command in the Linux infoMap */
     std::string execsh(const char* cmd) override {
     std::array<char, 128> buffer;
     std::string result;
@@ -21,71 +21,107 @@ protected:
     }
         return result;
     }
-    /* Shell Commands to gather Linux-specific info */ 
+    /* Shell Commands to gather Linux-specific info */
     void gatherInfo() override {
         infoMap["CPU Name"] = "lscpu | grep -oP \'Model name:\\s*\\K.+\'";
-        infoMap["CPU Architecture"] =  "lscpu | grep -oP \'Architecture:\\s*\\K.+\'"; 
-        infoMap["CPU Sockets Installed"] = "lscpu | grep -oP \'Socket\\(s\\):s*\\K.+\'";   
-        infoMap["CPU Cores per Socket"] = "lscpu | grep -oP \'Core\\(s\\) per socket:\\s*\\K.+\'"; 
-        infoMap["CPU Threads Per Core"] = "lscpu | grep -oP \'Thread\\(s\\) per core:\\s*\\K.+\'"; 
-        infoMap["CPU Logical Cores"] = "lscpu | grep -oP \'CPU\\(s\\):\\s*\\K.+\'"; 
-        infoMap["CPU Cache Line Size"] = "getconf -a | grep CACHE | grep -oP -m1 \'LINESIZE\\s*\\K.+\'";  
-        infoMap["Stack Size Limit"] = "ulimit -a | grep stack"; 
-        infoMap["RAM MemTotal"] = "cat /proc/meminfo | grep -oP \'MemTotal:\\s*\\K.+\'";     
-        infoMap["RAM MemFree "] = "cat /proc/meminfo | grep -oP \'MemFree:\\s*\\K.+\'";      
-        os  = execsh("cat -s /etc/os-release | grep -oP \"PRETTY_NAME=\\K.*\"");
-        
-        /* Remove whitespace from output */ 
-        os  = sanitize(os);  
-        os = trim(os); 
+        infoMap["CPU Architecture"] =  "lscpu | grep -oP \'Architecture:\\s*\\K.+\'";
+        infoMap["CPU Sockets Installed"] = "lscpu | grep -oP \'Socket\\(s\\):s*\\K.+\'";
+        infoMap["CPU Cores per Socket"] = "lscpu | grep -oP \'Core\\(s\\) per socket:\\s*\\K.+\'";
+        infoMap["CPU Threads Per Core"] = "lscpu | grep -oP \'Thread\\(s\\) per core:\\s*\\K.+\'";
+        infoMap["CPU Logical Cores"] = "lscpu | grep -oP \'CPU\\(s\\):\\s*\\K.+\'";
+        infoMap["CPU Cache Line Size"] = "getconf -a | grep CACHE | grep -oP -m1 \'LINESIZE\\s*\\K.+\'";
+        infoMap["Stack Size Limit"] = "ulimit -a | grep stack";
+        infoMap["RAM MemTotal"] = "cat /proc/meminfo | grep -oP \'MemTotal:\\s*\\K.+\'";
+        infoMap["RAM MemFree "] = "cat /proc/meminfo | grep -oP \'MemFree:\\s*\\K.+\'";
+
+        // Command to detect  OS
+        os = execsh("cat -s /etc/os-release | grep -oP \"PRETTY_NAME=\\K.*\"");
+        os = sanitize(os);  /* Remove whitespace from output */
+        os = trim(os);      /* Remove whitespace from output */
+
+        // Commands to detect GPU
         gpu = execsh("lspci | grep -i 3D");
-        
-        /* Alternative commands for GPU detection*/ 
-        if (gpu.empty()) { 
-            gpu = execsh("lspci | grep -i VGA"); 
+        if (gpu.empty()) {
+            gpu = execsh("lspci | grep -i VGA");
         }
-
-        if (gpu.empty()) { 
-            gpu = execsh("lspci | grep -i display"); 
+        if (gpu.empty()) {
+            gpu = execsh("lspci | grep -i display");
         }
+        gpu = sanitize(gpu); /* Remove whitespace from output */
+        gpu = trim(gpu);     /* Remove whitespace from output */
+        gpu_info = gpuProgModel(gpu); /* Use string matching to try and determine the GPU Vendor */
 
-        /* Remove whitespace from output */ 
-        gpu = sanitize(gpu); 
-        gpu = trim(gpu); 
-        /* Use string matching to try and determine the GPU Vendor */ 
-        gpu_info = gpuProgModel(gpu); 
-        /* Process commands stored in map key, then replace the key with the command output */  
+        /* Process commands stored in map key, then replace the key with the command output */
         std::map<std::string, std::string>::iterator it = infoMap.begin();
-        while (it != infoMap.end()) { 
-            std::string command = it->second;    // query command stored in map value 
-            const char* torun   = &command[0];   // cast for execsh function  
-            std::string result  = execsh(torun); // run the command and store the result 
-            result = sanitize(result);           // Remove whitespace from output 
-            result = trim(result);               // Remove whitespace from output 
+        while (it != infoMap.end()) {
+            std::string command = it->second;    // query command stored in map value
+            const char* torun   = &command[0];   // cast for execsh function
+            std::string result  = execsh(torun); // run the command and store the result
+            result = sanitize(result);           // Remove whitespace from output
+            result = trim(result);               // Remove whitespace from output
             it->second = result;                 // replace cmd with output of cmd
             it++;                                // step through
         }
-        /* Calculate total physical CPU cores from map values */ 
-        std::string cpu_CPS = infoMap["CPU Cores per Socket"]; 
-        std::string cpu_S   = infoMap["CPU Sockets Installed"]; 
-        
-        /* These are often "-" on virtual machines :( */ 
+        /* Calculate total physical CPU cores from map values */
+        std::string cpu_CPS = infoMap["CPU Cores per Socket"];
+        std::string cpu_S   = infoMap["CPU Sockets Installed"];
+
+        /* These are often "-" on virtual machines :( */
         if (cpu_CPS.empty() || cpu_S.empty()) {
             std::cout << "CPU Cores per Socket value is empty!" << std::endl;
-            cpu_TC = "Total Cores undetermined. Cores per Socket or Sockets Installed is empty"; 
-        } 
+            cpu_TC = "Total Cores undetermined. Cores per Socket or Sockets Installed is empty";
+        }
         else {
-            try { 
-                unsigned int total  = std::stoi(cpu_CPS) * std::stoi(cpu_S);  
-                cpu_TC = std::to_string(total); 
-            } 
-            catch (const std::invalid_argument& e) { 
-                throw std::runtime_error("Conversion error: Invalid argument encountered when calculating total cores.");     
+            try {
+                unsigned int total  = std::stoi(cpu_CPS) * std::stoi(cpu_S);
+                cpu_TC = std::to_string(total);
+            }
+            catch (const std::invalid_argument& e) {
+                throw std::runtime_error("Conversion error: Invalid argument encountered when calculating total cores.");
             }
             catch (const std::out_of_range& e) {
                 throw std::runtime_error("Conversion error: Value out of range when calculating total cores.");
             }
         }
+        // --- NEW RAM CONVERSION LOGIC (GB instead of KB) ---
+        try {
+            // Check if "RAM MemTotal" exists and convert it
+            if (infoMap.count("RAM MemTotal")) {
+                long long memTotalKB = std::stoll(infoMap["RAM MemTotal"]);
+                double memTotalGB = static_cast<double>(memTotalKB) / (1024.0 * 1024.0);
+
+                // Use std::fixed and std::setprecision for formatted output
+                std::stringstream ss;
+                ss << std::fixed << std::setprecision(2) << memTotalGB; // e.g., 8.00 GB
+                infoMap["RAM MemTotal (GB)"] = ss.str() + " GB";
+
+                // Remove the old KB entry
+                infoMap.erase("RAM MemTotal");
+            }
+
+            // Check if "RAM MemFree " exists and convert it (note the trailing space in the key)
+            if (infoMap.count("RAM MemFree ")) {
+                long long memFreeKB = std::stoll(infoMap["RAM MemFree "]);
+                double memFreeGB = static_cast<double>(memFreeKB) / (1024.0 * 1024.0);
+
+                std::stringstream ss;
+                ss << std::fixed << std::setprecision(2) << memFreeGB; // e.g., 2.50 GB
+                infoMap["RAM MemFree (GB)"] = ss.str() + " GB";
+
+                // Remove the old KB entry
+                infoMap.erase("RAM MemFree ");
+            }
+        } catch (const std::invalid_argument& e) {
+            std::cerr << "ERROR: Invalid argument encountered when converting RAM to GB: " << e.what() << std::endl;
+            // Set a default error string in infoMap
+            infoMap["RAM MemTotal (GB)"] = "Error";
+            infoMap["RAM MemFree (GB)"] = "Error";
+        } catch (const std::out_of_range& e) {
+            std::cerr << "ERROR: Value out of range when converting RAM to GB: " << e.what() << std::endl;
+            infoMap["RAM MemTotal (GB)"] = "Error";
+            infoMap["RAM MemFree (GB)"] = "Error";
+        }
+        // --- END NEW RAM CONVERSION LOGIC ---
     }
 };
 #endif
